@@ -1,42 +1,53 @@
 {
-    "name": "kusto-syntax-highlighting",
-    "displayName": "Azure Log Analytics (Kusto) Syntax Highlighting",
-    "description": "Support for the Azure Log Analytics (Kusto) language syntax in Visual Studio Code.",
-    "version": "0.0.1",
-    "publisher": "josin",
-    "homepage": "https://github.com/josin/kusto-syntax-highlighting",
-    "repository": {
-      "type": "git",
-      "url": "https://github.com/josin/kusto-syntax-highlighting"
-    },
-    "bugs": {
-      "url": "https://github.com/josin/kusto-syntax-highlighting/issues"
-    },
-    "engines": {
-        "vscode": "^1.21.0"
-    },
-    "categories": [
-        "Languages"
+  "name": "kusto-syntax-highlighting",
+  "displayName": "Azure Log Analytics (Kusto) Syntax Highlighting",
+  "description": "Support for the Azure Log Analytics (Kusto) language syntax in Visual Studio Code.",
+  "version": "1.0.1",
+  "publisher": "josin",
+  "homepage": "https://github.com/josin/kusto-syntax-highlighting",
+  "icon": "images/kusto_logo.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/josin/kusto-syntax-highlighting"
+  },
+  "bugs": {
+    "url": "https://github.com/josin/kusto-syntax-highlighting/issues"
+  },
+  "engines": {
+    "vscode": "^1.21.0"
+  },
+  "categories": [
+    "Languages"
+  ],
+  "keywords": [
+    "kusto",
+    "azure",
+    "language",
+    "highlight",
+    "syntax"
+  ],
+  "license": "Apache-2.0",
+  "contributes": {
+    "languages": [
+      {
+        "id": "kusto",
+        "aliases": [
+          "Kusto",
+          "kusto"
+        ],
+        "extensions": [
+          ".csl",
+          ".kusto"
+        ],
+        "configuration": "./language-configuration.json"
+      }
     ],
-    "keywords": [
-      "kusto",
-      "azure",
-      "language",
-      "highlight",
-      "syntax"
-    ],
-    "license": "Apache-2.0",
-    "contributes": {
-        "languages": [{
-            "id": "kusto",
-            "aliases": ["Kusto", "kusto"],
-            "extensions": [".csl", ".kusto"],
-            "configuration": "./language-configuration.json"
-        }],
-        "grammars": [{
-            "language": "kusto",
-            "scopeName": "source.kusto",
-            "path": "./syntaxes/kusto.tmLanguage"
-        }]
-    }
+    "grammars": [
+      {
+        "language": "kusto",
+        "scopeName": "source.kusto",
+        "path": "./syntaxes/kusto.tmLanguage"
+      }
+    ]
+  }
 }
