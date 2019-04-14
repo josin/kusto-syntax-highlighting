@@ -1,17 +1,17 @@
 {
-  "name": "kusto-syntax-highlighting",
-  "displayName": "Azure Log Analytics (Kusto) Syntax Highlighting",
-  "description": "Support for the Azure Log Analytics (Kusto) language syntax in Visual Studio Code.",
-  "version": "1.0.1",
-  "publisher": "josin",
-  "homepage": "https://github.com/josin/kusto-syntax-highlighting",
+  "name": "kuskus-kusto-syntax-highlighting",
+  "displayName": "[kuskus] Kusto Syntax Highlighting",
+  "description": "Support for the Kusto language syntax in Visual Studio Code.",
+  "version": "1.1.0",
+  "publisher": "rosshamish",
+  "homepage": "https://github.com/rosshamish/kusto-syntax-highlighting",
   "icon": "images/kusto_logo.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/josin/kusto-syntax-highlighting"
+    "url": "https://github.com/rosshamish/kusto-syntax-highlighting"
   },
   "bugs": {
-    "url": "https://github.com/josin/kusto-syntax-highlighting/issues"
+    "url": "https://github.com/rosshamish/kusto-syntax-highlighting/issues"
   },
   "engines": {
     "vscode": "^1.21.0"

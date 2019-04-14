@@ -90,7 +90,7 @@
                     -  https://docs.microsoft.com/en-us/azure/kusto/query/make-seriesoperator
                     -->
                     <key>match</key>
-                    <string>\b(series_fir|series_iir|series_fit_line|series_fit_line_dynamic|series_fit_2lines|series_fit_2lines_dynamic|series_outliers|series_periods_detect|series_periods_validate|series_stats_dynamic|series_stats)\b</string>
+                    <string>\b(series_fir|series_iir|series_fit_line|series_fit_line_dynamic|series_fit_2lines|series_fit_2lines_dynamic|series_outliers|series_periods_detect|series_periods_validate|series_stats_dynamic|series_stats)(?=\()</string>
                     <key>name</key>
                     <string>support.function</string>
                 </dict>
@@ -99,7 +99,7 @@
                     -  https://docs.microsoft.com/en-us/azure/kusto/query/make-seriesoperator
                     -->
                     <key>match</key>
-                    <string>\b(series_fill_backward|series_fill_const|series_fill_forward|series_fill_linear)\b</string>
+                    <string>\b(series_fill_backward|series_fill_const|series_fill_forward|series_fill_linear)(?=\()</string>
                     <key>name</key>
                     <string>support.function</string>
                 </dict>
