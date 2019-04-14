@@ -61,7 +61,7 @@
                     - TODO $left, $right
                     -->
                     <key>match</key>
-                    <string>\b(on|kind|innerunique|inner|leftouter|rightouter|fullouter|leftanti|anti|leftantisemi|rightanti|rightantisemi|leftsemi|rightsemi|hint\.remote|hint\.strategy|shuffle|broadcast)\b</string>
+                    <string>\b(on|kind|hint\.remote|hint\.strategy)\b</string>
                     <key>name</key>
                     <string>keyword.operator.kusto</string>
                 </dict>
@@ -72,8 +72,18 @@
                         <key>match</key>
                         <string>(\$left|\$right)\b</string>
                         <key>name</key>
-                        <string>keyword.operator.kusto</string>
+                        <string>keyword.other.kusto</string>
                     </dict>
+                    <dict>
+                        <!-- Tabular operators: join (kinds, strategies)
+                        -  https://docs.microsoft.com/en-us/azure/kusto/query/joinoperator
+                        -->
+                        <key>match</key>
+                        <string>\b(innerunique|inner|leftouter|rightouter|fullouter|leftanti|anti|leftantisemi|rightanti|rightantisemi|leftsemi|rightsemi|shuffle|broadcast)\b</string>
+                        <key>name</key>
+                        <string>keyword.other.kusto</string>
+                    </dict>
+                    
                     
                 <dict>
                     <!-- Tabular operators: make-series (series analysis functions)
@@ -107,18 +117,18 @@
                     -  https://docs.microsoft.com/en-us/azure/kusto/query/orderoperator
                     -->
                     <key>match</key>
-                    <string>\b(by|asc|desc|nulls first|nulls last)\b</string>
+                    <string>\b(asc|desc|nulls first|nulls last)\b</string>
                     <key>name</key>
-                    <string>keyword.operator.kusto</string>
+                    <string>keyword.other.kusto</string>
                 </dict>
                 <dict>
                     <!-- Tabular operators: parse
                     -  https://docs.microsoft.com/en-us/azure/kusto/query/parseoperator
                     -->
                     <key>match</key>
-                    <string>\b(kind|regex|simple|relaxed)\b</string>
+                    <string>\b(regex|simple|relaxed)\b</string>
                     <key>name</key>
-                    <string>keyword.operator.kusto</string>
+                    <string>keyword.other.kusto</string>
                 </dict>
                 <dict>
                     <!-- Tabular operators: render
