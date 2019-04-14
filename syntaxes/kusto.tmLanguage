@@ -342,7 +342,7 @@
                 <key>match</key>
                 <string>\.create-or-alter</string>
                 <key>name</key>
-                <string>keyword.operator.kusto</string>
+                <string>keyword.control.kusto</string>
             </dict>
             <dict>
                 <!-- User-defined functions
