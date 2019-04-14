@@ -156,7 +156,7 @@
                   -  https://docs.microsoft.com/en-us/azure/kusto/query/binoperators
                 -->
                 <key>match</key>
-                <string>\b(|==|!=|and|or|!in|=~|!~|has|has_cs|hasprefix|hasprefix_cs|hassuffix|hassuffix_cs|contains|contains_cs|startswith|startswith_cs|endswith|endswith_cs|matches|regex|in|between)\b</string>
+                <string>\b(and|or|!in|has|has_cs|hasprefix|hasprefix_cs|hassuffix|hassuffix_cs|contains|contains_cs|startswith|startswith_cs|endswith|endswith_cs|matches|regex|in|between)\b</string>
                 <key>name</key>
                 <string>keyword.operator.kusto</string>
             </dict>
@@ -359,7 +359,7 @@
                 <!-- Deprecated keywords
                 -->
                 <key>match</key>
-                <string>\b()\b</string>
+                <string></string>
                 <key>name</key>
                 <string>invalid.deprecated</string>
             </dict>
@@ -367,7 +367,7 @@
                 <!-- Illegal keywords
                 -->
                 <key>match</key>
-                <string>\b()\b</string>
+                <string></string>
                 <key>name</key>
                 <string>invalid.illegal</string>
             </dict>
