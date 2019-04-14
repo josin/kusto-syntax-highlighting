@@ -15,49 +15,196 @@
         <string>kusto file</string>
 
         <key>patterns</key>
+        <!-- Kusto Query Language
+          -  https://docs.microsoft.com/en-us/azure/kusto/query/
+        -->
         <array>
-			<dict>
-				<key>match</key>
-				<string>\b(let|count|ingestion_time|and|or|max|min|iff|isempty|isnotempty|log|sum|extract|now|false|true|makeset|makelist|any|arg_max|arg_min|any|dcount|sumif|countif|avg|materialize|pack|database|strcat|translate|substring|tostring|toscalar|strlen|contains|in|startswith|endswith|split|typeof)\b</string>
-				<key>name</key>
-				<string>keyword.functions.kusto</string>
-			</dict>
-			<dict>
-				<key>match</key>
-				<string>\b(where|summarize|extend|mvexpand|project|sort|project|-away|join|union|limit|order|sort|top|print|datatable)\b</string>
-				<key>name</key>
-				<string>keyword.control.kusto</string>
-			</dict>
-			<dict>
-				<key>match</key>
-				<string>".*?"</string>
-				<key>name</key>
-				<string>string.constant.double</string>
-			</dict>
-			<dict>
-				<key>match</key>
-				<string>'.*?'</string>
-				<key>name</key>
-				<string>string.constant.single</string>
-			</dict>
-			<dict>
-				<key>match</key>
-				<string>//.*</string>
-				<key>name</key>
-				<string>comment</string>
-			</dict>
-			<dict>
-				<key>match</key>
-				<string>\{.*?\}</string>
-				<key>name</key>
-				<string>string.variable</string>
-			</dict>
+            <dict>
+                <!-- Data types
+                  -  https://docs.microsoft.com/en-us/azure/kusto/query/scalar-data-types/
+                -->
+                <key>match</key>
+                <string>\b(bool|datetime|decimal|dynamic|guid|int|long|real|string|timespan)\b</string>
+                <key>name</key>
+                <string>storage.type</string>
+            </dict>
+            <dict>
+                <!-- Query statements
+                  -  https://docs.microsoft.com/en-us/azure/kusto/query/statements
+                -->
+                <key>match</key>
+                <string>\b(let|set|alias|declare|pattern|restrict|access|to|set)\b</string>
+                <key>name</key>
+                <string>keyword.control.kusto</string>
+            </dict>
+            <dict>
+                <!-- Tabular operators
+                  -  https://docs.microsoft.com/en-us/azure/kusto/query/statements
+                -->
+                <key>match</key>
+                <string>\b(as|consume|count|datatable|distinct|evaluate|extend|externaldata|facet|find|fork|getschema|invoke|join|limit|take|lookup|make-series|mv-expand|order|sort|project|project-away|project-rename|parse|partition|print|range|reduce|render|sample|sample-distinct|search|serialize|sort|summarize|take|top|top-nested|top-hitters|union|where)\b</string>
+                <key>name</key>
+                <string>keyword.operator.kusto</string>
+            </dict>
+            <dict>
+                <!-- Tabular operators: evalute (plugins)
+                  -  https://docs.microsoft.com/en-us/azure/kusto/query/evaluateoperator
+                -->
+                <key>match</key>
+                <string>\b(autocluster|bag_unpack|basket|dcount_intersect|narrow|pivot|preview|rolling_percentile|sql_request)\b</string>
+                <key>name</key>
+                <string>support.function</string>
+            </dict>
+            <dict>
+                <!-- Tabular operators: join
+                  -  https://docs.microsoft.com/en-us/azure/kusto/query/joinoperator
+                -->
+                <key>match</key>
+                <string>\b(on|\$left|\$right|kind|innerunique|inner|leftouter|rightouter|fullouter|leftanti|anti|leftantisemi|rightanti|rightantisemi|leftsemi|rightsemi|hint\.remote|hint\.strategy|shuffle|broadcast)\b</string>
+                <key>name</key>
+                <string>keyword.operator.kusto</string>
+            </dict>
+            <dict>
+                <!-- Tabular operators: make-series (series analysis functions)
+                  -  https://docs.microsoft.com/en-us/azure/kusto/query/make-seriesoperator
+                -->
+                <key>match</key>
+                <string>\b(series_fir|series_iir|series_fit_line|series_fit_line_dynamic|series_fit_2lines|series_fit_2lines_dynamic|series_outliers|series_periods_detect|series_periods_validate|series_stats_dynamic|series_stats)\b</string>
+                <key>name</key>
+                <string>support.function</string>
+            </dict>
+            <dict>
+                <!-- Tabular operators: make-series (series interpolation functions)
+                  -  https://docs.microsoft.com/en-us/azure/kusto/query/make-seriesoperator
+                -->
+                <key>match</key>
+                <string>\b(series_fill_backward|series_fill_const|series_fill_forward|series_fill_linear)\b</string>
+                <key>name</key>
+                <string>support.function</string>
+            </dict>
+            <dict>
+                <!-- Tabular operators: mv-expand (bagexpand options)
+                  -  https://docs.microsoft.com/en-us/azure/kusto/query/mvexpandoperator
+                -->
+                <key>match</key>
+                <string>\b(bag|array)\b</string>
+                <key>name</key>
+                <string>keyword.operator.kusto</string>
+            </dict>
+            <dict>
+                <!-- Tabular operators: order
+                  -  https://docs.microsoft.com/en-us/azure/kusto/query/orderoperator
+                -->
+                <key>match</key>
+                <string>\b(by|asc|desc|nulls first|nulls last)\b</string>
+                <key>name</key>
+                <string>keyword.operator.kusto</string>
+            </dict>
+            <dict>
+                <!-- Tabular operators: parse
+                  -  https://docs.microsoft.com/en-us/azure/kusto/query/parseoperator
+                -->
+                <key>match</key>
+                <string>\b(kind|regex|simple|relaxed)\b</string>
+                <key>name</key>
+                <string>keyword.operator.kusto</string>
+            </dict>
+            <dict>
+                <!-- Tabular operators: render
+                  -  https://docs.microsoft.com/en-us/azure/kusto/query/renderoperator
+                  -
+                  - TODO Properties (accumulate ... anomalycolumns)
+                  - TODO visualization kinds (areachart ... columnchart)
+                  - TODO ysplit
+                -->
+                <key>match</key>
+                <string>\b(anomalychart|areachart|barchart|columnchart|ladderchart|linechart|piechart|pivotchart|scatterchart|stackedareachart|table|timechart|timepivot)\b</string>
+                <key>name</key>
+                <string>keyword.operator.kusto</string>
+            </dict>
+            <dict>
+                <!-- Tabular operators: common helper operators
+                  -  https://docs.microsoft.com/en-us/azure/kusto/query/evaluateoperator
+                -->
+                <key>match</key>
+                <string>\b(by|from|in|of|to|step|with)\b</string>
+                <key>name</key>
+                <string>keyword.operator.kusto</string>
+            </dict>
+            <dict>
+                <!-- Special functions
+                  -  https://docs.microsoft.com/en-us/azure/kusto/query/clusterfunction
+                -->
+                <key>match</key>
+                <string>\b(cluster|database|materialize|table|toscalar)\b</string>
+                <key>name</key>
+                <string>keyword.operator.kusto</string>
+            </dict>
+            <dict>
+                <!-- Scalar operators
+                  -  https://docs.microsoft.com/en-us/azure/kusto/query/binoperators
+                -->
+                <key>match</key>
+                <string>\b(binary_and|binary_not|binary_or|binary_shift_left|binary_shift_right|binary_xor|==|!=|and|or|!in|=~|!~|has|has_cs|hasprefix|hasprefix_cs|hassuffix|hassuffix_cs|contains|contains_cs|startswith|startswith_cs|endswith|endswith_cs|matches|regex|in|between)\b</string>
+                <key>name</key>
+                <string>keyword.operator.kusto</string>
+            </dict>
+            <dict>
+                <!-- Scalar functions
+                  -  https://docs.microsoft.com/en-us/azure/kusto/query/scalarfunctions
+                  - TODO all of these
+                -->
+                <key>match</key>
+                <string>\b()\b</string>
+                <key>name</key>
+                <string>keyword.operator.kusto</string>
+            </dict>
+            <dict>
+                <key>match</key>
+                <string>".*?"</string>
+                <key>name</key>
+                <string>string.quoted.double</string>
+            </dict>
+            <dict>
+                <key>match</key>
+                <string>'.*?'</string>
+                <key>name</key>
+                <string>string.quoted.single</string>
+            </dict>
+            <dict>
+                <key>match</key>
+                <string>//.*</string>
+                <key>name</key>
+                <string>comment.line</string>
+            </dict>
+            <dict>
+                <key>match</key>
+                <string>\{.*?\}</string>
+                <key>name</key>
+                <string>string.variable</string>
+            </dict>
             <dict>
                 <key>match</key>
                 <string>\b((0(x|X)[0-9a-fA-F]*)|(([0-9]+\.?[0-9]*)|(\.[0-9]+))((e|E)(\+|-)?[0-9]+)?)(L|l|UL|ul|u|U|F|f|ll|LL|ull|ULL)?\b</string>
                 <key>name</key>
                 <string>constant.numeric</string>
-            </dict>                                
+            </dict>
+            <dict>
+                <!-- Deprecated keywords
+                -->
+                <key>match</key>
+                <string>\b()\b</string>
+                <key>name</key>
+                <string>invalid.deprecated</string>
+            </dict>
+            <dict>
+                <!-- Illegal keywords
+                -->
+                <key>match</key>
+                <string>\b()\b</string>
+                <key>name</key>
+                <string>invalid.illegal</string>
+            </dict>
         </array>
         <key>uuid</key>
         <string>FF0550E0-3A29-11E3-AA6E-0800200C9B77</string>
