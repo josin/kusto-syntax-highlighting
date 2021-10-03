@@ -24,7 +24,7 @@
 			</dict>
 			<dict>
 				<key>match</key>
-				<string>\b(where|summarize|extend|mvexpand|project|sort|project|-away|join|union|limit|order|sort|top|print|datatable)\b</string>
+				<string>\b(as|between|consume|count|datatable|distinct|evaluate|extend|externaldata|facet|find|fork|getschema|has|has-all|in|invoke|join|limit|lookup|make|mv|mvexpand|notbetween|order|parse|parsewhere|partition|print|project|project-keep|projectaway|projectrename|projectreorder|range|reduce|render|sample|sampledistinct|scan|search|serialize|sort|summarize|take|top|tophitters|topnested|union|where)\b</string>
 				<key>name</key>
 				<string>keyword.control.kusto</string>
 			</dict>
