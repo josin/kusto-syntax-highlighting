@@ -1,0 +1,22 @@
+// Operators used as operands (column names) should NOT be highlighted as keywords
+// e.g. 'datatable', 'where', 'sort' etc. are valid column names in Kusto
+
+DataSet
+| summarize count() by datatable
+
+// 'datatable' after 'by' is a column name, not a tabular operator
+
+MyTable
+| where where > 0
+| summarize count() by sort, order, limit
+
+// Tabular operators are only keywords when they immediately follow '|'
+
+StormEvents
+| where isnotempty(EndLocation)
+| summarize event_count=count() by EndLocation
+| top 10 by event_count
+
+// project-away operator example
+MyTable
+| project-away TempColumn

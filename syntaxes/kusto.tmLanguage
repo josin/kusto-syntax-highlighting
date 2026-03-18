@@ -24,9 +24,20 @@
 			</dict>
 			<dict>
 				<key>match</key>
-				<string>\b(where|summarize|extend|mvexpand|project|sort|project|-away|join|union|limit|order|sort|top|print|datatable)\b</string>
-				<key>name</key>
-				<string>keyword.control.kusto</string>
+				<string>(\|)[ \t]*(project-away|where|summarize|extend|mvexpand|project|sort|join|union|limit|order|top|print|datatable)\b</string>
+				<key>captures</key>
+				<dict>
+					<key>1</key>
+					<dict>
+						<key>name</key>
+						<string>keyword.operator.pipe.kusto</string>
+					</dict>
+					<key>2</key>
+					<dict>
+						<key>name</key>
+						<string>keyword.control.kusto</string>
+					</dict>
+				</dict>
 			</dict>
 			<dict>
 				<key>match</key>
