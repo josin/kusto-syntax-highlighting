@@ -1,0 +1,9 @@
+Azure Log Analytics (Kusto) Syntax Highlighting
+Copyright 2016 Josef Sin
+
+This product is licensed under the Apache License, Version 2.0.
+
+This product includes software derived from the TextmateBundleInstaller project
+(https://github.com/madskristensen/TextmateBundleInstaller), specifically the
+Kusto syntax definition
+(https://github.com/madskristensen/TextmateBundleInstaller/blob/master/src/Bundles/kusto/Syntaxes/kusto.plist).
