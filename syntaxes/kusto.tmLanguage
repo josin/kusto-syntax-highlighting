@@ -18,6 +18,12 @@
         <array>
 			<dict>
 				<key>match</key>
+				<string>\.?(create-or-alter)\b</string>
+				<key>name</key>
+				<string>keyword.control.kusto</string>
+			</dict>
+			<dict>
+				<key>match</key>
 				<string>\b(let|count|ingestion_time|and|or|max|min|iff|isempty|isnotempty|log|sum|extract|now|false|true|makeset|makelist|any|arg_max|arg_min|any|dcount|sumif|countif|avg|materialize|pack|database|strcat|translate|substring|tostring|toscalar|strlen|contains|in|startswith|endswith|split|typeof)\b</string>
 				<key>name</key>
 				<string>keyword.functions.kusto</string>
