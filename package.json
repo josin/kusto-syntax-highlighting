@@ -2,10 +2,14 @@
   "name": "kusto-syntax-highlighting",
   "displayName": "Kusto Query Language (KQL) Syntax Highlighting",
   "description": "Support for the Kusto Query Language (KQL) syntax in Visual Studio Code. Used in Azure Monitor, Azure Data Explorer, Microsoft Sentinel, and Microsoft Fabric.",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "publisher": "josin",
   "homepage": "https://github.com/josin/kusto-syntax-highlighting",
   "icon": "images/kusto_logo.png",
+  "galleryBanner": {
+    "color": "#0078D4",
+    "theme": "dark"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/josin/kusto-syntax-highlighting"
@@ -17,11 +21,15 @@
     "vscode": "^1.75.0"
   },
   "categories": [
-    "Languages"
+    "Programming Languages"
   ],
   "keywords": [
     "kusto",
+    "kql",
     "azure",
+    "log analytics",
+    "azure data explorer",
+    "azure monitor",
     "language",
     "highlight",
     "syntax"
@@ -50,6 +58,7 @@
         "id": "kusto",
         "aliases": [
           "Kusto",
+          "KQL",
           "kusto"
         ],
         "extensions": [
@@ -64,7 +73,7 @@
       {
         "language": "kusto",
         "scopeName": "source.kusto",
-        "path": "./syntaxes/kusto.tmLanguage"
+        "path": "./syntaxes/kusto.tmLanguage.json"
       }
     ],
     "commands": [

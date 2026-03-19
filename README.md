@@ -1,18 +1,51 @@
-# Kusto Language Support
+# Kusto (KQL) Language Support for VS Code
 
-Support for the Kusto Query Language (KQL) syntax in Visual Studio Code. KQL is used in Azure Monitor, Azure Data Explorer, Microsoft Sentinel, and Microsoft Fabric. Includes syntax highlighting and the ability to run queries directly against an Azure Data Explorer cluster.
+[![Version](https://img.shields.io/visual-studio-marketplace/v/josin.kusto-syntax-highlighting)](https://marketplace.visualstudio.com/items?itemName=josin.kusto-syntax-highlighting)
+[![Installs](https://img.shields.io/visual-studio-marketplace/i/josin.kusto-syntax-highlighting)](https://marketplace.visualstudio.com/items?itemName=josin.kusto-syntax-highlighting)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+
+Support for the **Kusto Query Language (KQL)** in Visual Studio Code. KQL is used in Azure Monitor, Azure Data Explorer, Microsoft Sentinel, and Microsoft Fabric. Includes syntax highlighting and the ability to run queries directly against an Azure Data Explorer cluster.
 
 ## Features
 
-- **Syntax highlighting** for `.kusto`, `.kql`, and `.csl` files
+- **Syntax highlighting** for `.csl`, `.kusto`, and `.kql` files
+- **Tabular operators**: `where`, `summarize`, `project`, `project-away`, `join`, `union`, `extend`, `render`, `parse`, `mv-apply`, `evaluate`, and more
+- **Scalar functions**: string, math, datetime, geo, IP, array, dynamic bag functions (500+)
+- **Aggregation functions**: `count`, `dcount`, `sum`, `avg`, `percentile`, `make_list`, `make_set`, and more
+- **Data types**: `bool`, `datetime`, `dynamic`, `guid`, `int`, `long`, `real`, `string`, `timespan`
+- **Comment toggling** (`//` line comments, `/* */` block comments)
+- **Bracket matching** and **auto-closing pairs** for `{}`, `[]`, `()`
+- **Code folding** via `// #region` / `// #endregion` markers
+- **Smart indentation** inside `{}` blocks
 - **Run queries** against an Azure Data Explorer (Kusto) cluster without leaving VS Code
 - Supports **Azure CLI**, **interactive browser**, and **managed identity** authentication
 
-## Highlighting
+## Example
 
-Adds highlighting support for Kusto Query Language (KQL) (`.csl` and `.kusto`). This syntax is based on [TextmateBundleInstaller](https://github.com/madskristensen/TextmateBundleInstaller) - [Kusto syntax](https://github.com/madskristensen/TextmateBundleInstaller/blob/master/src/Bundles/kusto/Syntaxes/kusto.plist).
+```kusto
+// Query the last hour of errors from AppTraces
+let timeRange = 1h;
+AppTraces
+| where TimeGenerated > ago(timeRange)
+| where SeverityLevel >= 3
+| summarize ErrorCount = count(), LastSeen = max(TimeGenerated) by Message
+| order by ErrorCount desc
+| take 20
+```
 
-![Kusto Query Language (KQL) syntax](/images/screenshot1.png?raw=true)
+![Kusto Query Language (KQL) syntax](images/screenshot1.png)
+
+## File Associations
+
+The extension activates automatically for files with these extensions:
+
+| Extension | Description |
+|-----------|-------------|
+| `.kql` | KQL query files |
+| `.kusto` | Kusto query files |
+| `.csl` | Kusto control sequence files |
+
+To manually set the language for an open file, use the **Select Language Mode** command (`Ctrl+K M`) and choose **Kusto**.
 
 ## Run Kusto Queries
 
@@ -24,11 +57,7 @@ You can execute Kusto queries directly from VS Code against an Azure Data Explor
 - An **Azure Data Explorer** cluster you have access to
 - For `AzureLogin` mode (default): the [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli) installed and signed in
 
-### Step 1 — Install the Extension
-
-Install the extension from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=josin.kusto-syntax-highlighting), or search for **"Kusto"** in the VS Code Extensions panel (`Ctrl+Shift+X` / `Cmd+Shift+X`).
-
-### Step 2 — Configure the Extension
+### Step 1 — Configure the Extension
 
 Open **Settings** (`Ctrl+,` / `Cmd+,`) and search for `kusto`, or add the following to your User or Workspace settings JSON (`settings.json`):
 
@@ -48,12 +77,7 @@ Open **Settings** (`Ctrl+,` / `Cmd+,`) and search for `kusto`, or add the follow
 
 > **Tip:** Use **workspace** settings (`.vscode/settings.json`) to keep cluster details local to a specific project, keeping your global User settings clean.
 
-#### Finding your cluster URL
-
-Your cluster URL follows the pattern `https://<cluster-name>.<region>.kusto.windows.net`.  
-You can find it in the **Azure Portal** → your Azure Data Explorer cluster → **Overview** → **URI**.
-
-### Step 3 — Authenticate
+### Step 2 — Authenticate
 
 Choose the authentication method that fits your environment:
 
@@ -73,9 +97,9 @@ az login
 az account set --subscription "<subscription-name-or-id>"
 ```
 
-### Step 4 — Write and Run a Query
+### Step 3 — Write and Run a Query
 
-1. Create or open a file with the `.kusto` or `.csl` extension.
+1. Create or open a file with the `.kusto`, `.kql`, or `.csl` extension.
 2. Write your Kusto query, for example:
 
    ```kusto
@@ -95,24 +119,7 @@ az account set --subscription "<subscription-name-or-id>"
    | **Right-click menu** | Right-click in the editor → **Kusto: Run Query** |
    | **Command Palette** | `Ctrl+Shift+P` → type `Kusto: Run Query` |
 
-4. Results appear in the **Kusto Results** output channel at the bottom of the editor:
-
-   ```
-   [2024-05-01T12:00:00.000Z] Running query on https://mycluster.kusto.windows.net / MyDatabase
-   ────────────────────────────────────────────────────────────────────────────────
-   EventType        | Count
-   -----------------+------
-   Thunderstorm Wind | 4321
-   Hail              | 2100
-   Flash Flood       | 1850
-   ...
-
-   10 row(s) returned.
-   ────────────────────────────────────────────────────────────────────────────────
-   Query completed successfully.
-   ```
-
-> **Tip:** To run only part of a query, **select the lines** you want to execute before triggering the command. The extension will run the selection instead of the whole file.
+4. Results appear in the **Kusto Results** output channel at the bottom of the editor.
 
 ### Configuration Reference
 
@@ -136,9 +143,8 @@ Run `az login` in a terminal. If you have multiple tenants, use `az login --tena
 **"Forbidden" / 403 errors**  
 Your account does not have the required permissions on the cluster or database. Ask your cluster administrator to grant you at minimum the **Viewer** role on the target database.
 
-**The output panel opens but shows no results**  
-The query returned an empty result set. Try adding a `| take 10` to confirm the table has data.
+## Bugs & Contributions
 
-## Bugs
+Found a bug or have a feature request? Open an issue in the [GitHub repository](https://github.com/josin/kusto-syntax-highlighting/issues).
 
-If you happen to see bugs or have suggestions for improvements visit the [issue section](https://github.com/josin/kusto-syntax-highlighting/issues) of the [repository](https://github.com/josin/kusto-syntax-highlighting).
+Pull requests are welcome!
