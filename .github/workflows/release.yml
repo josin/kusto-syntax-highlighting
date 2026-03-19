@@ -67,19 +67,13 @@ jobs:
   open-release-pr:
     name: Open release PR
     needs: build
+    if: github.ref_name == 'main'
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
 
     steps:
-      - name: Ensure workflow runs on main
-        run: |
-          if [ "${{ github.ref_name }}" != "main" ]; then
-            echo "::error::This workflow must be dispatched from the 'main' branch (current: ${{ github.ref_name }}). Aborting."
-            exit 1
-          fi
-
       - name: Checkout repository
         uses: actions/checkout@v4
         with:

@@ -7,6 +7,9 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Fixed
+- **Release workflow** (`release.yml`): the `open-release-pr` job now uses a job-level `if: github.ref_name == 'main'` condition instead of a step-level `exit 1` check. When the workflow is dispatched from a non-`main` branch the job is now **skipped** (not failed), which is the correct GitHub Actions pattern.
+
 ### Changed
 - **Release workflow** (`release.yml`) now consists of two sequential jobs:
   1. `build` — validates the extension compiles and packages correctly (same as the PR build).
