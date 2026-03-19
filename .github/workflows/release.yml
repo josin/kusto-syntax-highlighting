@@ -1,15 +1,15 @@
 name: Release
 
-# Stage 2 of the pipeline (manual dispatch).
+# Single-step release pipeline (manual dispatch).
 #
 # Jobs:
-#   build            – validates the extension compiles and packages correctly.
-#   open-release-pr  – bumps the version, updates CHANGELOG.md from the git log,
-#                      pushes a release/vX.Y.Z branch, and opens a PR against master.
-#
-# Merging the opened PR is the manual promotion gate that triggers Stage 3
-# (publish.yml), which tags, publishes to the Marketplace, and creates a
-# GitHub Release.
+#   build    – validates the extension compiles and packages correctly.
+#   release  – bumps the version, updates CHANGELOG.md, commits directly to
+#              master, creates the git tag, and uploads the packaged extension.
+#   publish  – publishes to the VS Code Marketplace and creates a GitHub
+#              Release. Uses the optional "publish" GitHub Environment so that
+#              adding required reviewers to that environment provides a manual
+#              approval gate before the Marketplace publish.
 
 on:
   workflow_dispatch:
@@ -64,14 +64,16 @@ jobs:
           path: kusto-syntax-highlighting.vsix
           retention-days: 30
 
-  open-release-pr:
-    name: Open release PR
+  release:
+    name: Bump version, tag, and package
     needs: build
     if: github.ref_name == 'master'
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pull-requests: write
+    outputs:
+      version: ${{ steps.new_version.outputs.version }}
+      tag: ${{ steps.new_version.outputs.tag }}
 
     steps:
       - name: Checkout repository
@@ -109,7 +111,10 @@ jobs:
 
       - name: Read new version
         id: new_version
-        run: echo "version=$(node -p 'require("./package.json").version')" >> "$GITHUB_OUTPUT"
+        run: |
+          VERSION=$(node -p 'require("./package.json").version')
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "tag=v${VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Collect commits since last tag
         run: |
@@ -176,53 +181,74 @@ jobs:
 
           node /tmp/update_changelog.js
 
-      - name: Create release branch and open PR
+      - name: Compile TypeScript
+        run: npm ci && npm run compile
+
+      - name: Install vsce
+        run: npm install -g @vscode/vsce
+
+      - name: Package extension
+        run: vsce package --out kusto-syntax-highlighting.vsix
+
+      - name: Upload VSIX artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: kusto-syntax-highlighting-vsix-release
+          path: kusto-syntax-highlighting.vsix
+
+      - name: Commit version bump, tag, and push
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NEW_VERSION: ${{ steps.new_version.outputs.version }}
         run: |
-          BRANCH="release/v${NEW_VERSION}"
+          TAG="v${NEW_VERSION}"
 
-          # Abort if the branch already exists to prevent silently overwriting a
-          # previous release attempt or stale branch.
-          if git ls-remote --exit-code origin "refs/heads/${BRANCH}" > /dev/null 2>&1; then
-            echo "::error::Branch '${BRANCH}' already exists on remote. Delete it (and close any open release PR for that version) before retrying."
+          # Abort if the tag already exists to prevent overwriting a previous release.
+          if git ls-remote --tags origin "$TAG" | grep -q "$TAG"; then
+            echo "::error::Tag $TAG already exists on remote. Aborting to prevent overwriting a release."
             exit 1
           fi
 
-          git checkout -b "$BRANCH"
           git add package.json package-lock.json CHANGELOG.md
           git commit -m "chore: release v${NEW_VERSION}"
-          git push origin "$BRANCH"
 
-          cat > /tmp/pr_body.md << PREOF
-          Automated release PR for **v${NEW_VERSION}**.
+          # Rebase onto the latest master to handle any commits that landed after
+          # this workflow checked out the repository, so the tag points at the
+          # final, rebased release commit.
+          git pull --rebase origin master
 
-          ## What's included
+          # Create the tag locally after rebasing so that master commit and tag
+          # are pushed together in one atomic operation.
+          git tag "$TAG"
+          git push --atomic origin master "refs/tags/${TAG}"
 
-          - Version bumped to \`${NEW_VERSION}\` in \`package.json\`
-          - \`CHANGELOG.md\` updated with entries since the last release
+  publish:
+    name: Publish to Marketplace and create GitHub Release
+    needs: release
+    runs-on: ubuntu-latest
+    # The "publish" environment enables an optional manual approval gate.
+    # If the environment is not configured, this job runs immediately after
+    # "release" completes.
+    environment: publish
+    permissions:
+      contents: write
 
-          ## Before merging
+    steps:
+      - name: Download VSIX artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: kusto-syntax-highlighting-vsix-release
 
-          - Review and edit \`CHANGELOG.md\` if needed (move items to the correct sections, refine wording)
-          - Confirm the version number is correct
+      - name: Install vsce
+        run: npm install -g @vscode/vsce
 
-          ## After merging
+      - name: Publish to VS Code Marketplace
+        run: vsce publish --packagePath kusto-syntax-highlighting.vsix
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
 
-          Merging this PR will automatically trigger the **Publish Extension** pipeline, which will:
-
-          1. Create the \`v${NEW_VERSION}\` git tag
-          2. Build and package the extension
-          3. Publish to the VS Code Marketplace (requires the \`VSCE_PAT\` repository secret)
-          4. Create a GitHub Release with the \`.vsix\` artifact attached
-
-          > If a \`publish\` GitHub Environment is configured with required reviewers, a manual
-          > approval will be requested before the extension is published to the Marketplace.
-          PREOF
-
-          gh pr create \
-            --title "chore: release v${NEW_VERSION}" \
-            --body-file /tmp/pr_body.md \
-            --base master \
-            --head "$BRANCH"
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.release.outputs.tag }}
+          files: kusto-syntax-highlighting.vsix
+          generate_release_notes: true
