@@ -9,13 +9,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [2.0.1] - 2026-03-19
 
-### Fixed
-- Release workflow now uses a job-level `if: github.ref_name == 'master'` condition so non-`master` dispatches are **skipped** rather than failed.
-- All `main` branch references in workflows replaced with `master`.
-
-### Changed
-- Release workflow split into `build` and `open-release-pr` jobs; merging the generated PR is the manual promotion gate.
-- Publish workflow now triggers on merge of a `release/v*` PR instead of a direct tag push.
+Internal maintenance release — no user-facing changes.
 
 ## [2.0.0] - 2026-03-19
 
