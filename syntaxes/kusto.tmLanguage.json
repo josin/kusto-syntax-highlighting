@@ -1,0 +1,140 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Kusto",
+  "scopeName": "source.kusto",
+  "fileTypes": ["csl", "kusto", "kql"],
+  "uuid": "FF0550E0-3A29-11E3-AA6E-0800200C9B77",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings-double" },
+    { "include": "#strings-single" },
+    { "include": "#tabular-operators" },
+    { "include": "#special-functions" },
+    { "include": "#aggregation-functions" },
+    { "include": "#scalar-string-functions" },
+    { "include": "#scalar-datetime-functions" },
+    { "include": "#scalar-math-functions" },
+    { "include": "#scalar-array-bag-functions" },
+    { "include": "#scalar-geo-functions" },
+    { "include": "#scalar-ip-functions" },
+    { "include": "#scalar-type-functions" },
+    { "include": "#scalar-misc-functions" },
+    { "include": "#keywords" },
+    { "include": "#data-types" },
+    { "include": "#constants" },
+    { "include": "#variables" },
+    { "include": "#numbers" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.kusto",
+          "match": "//.*$"
+        }
+      ]
+    },
+    "strings-double": {
+      "name": "string.quoted.double.kusto",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.kusto",
+          "match": "\\\\."
+        }
+      ]
+    },
+    "strings-single": {
+      "name": "string.quoted.single.kusto",
+      "begin": "'",
+      "end": "'",
+      "patterns": [
+        {
+          "name": "constant.character.escape.kusto",
+          "match": "\\\\."
+        }
+      ]
+    },
+    "tabular-operators": {
+      "comment": "Kusto tabular operators that transform tables in a pipe expression",
+      "name": "keyword.control.kusto",
+      "match": "\\b(as|consume|count|datatable|distinct|evaluate|extend|externaldata|facet|find|fork|getschema|invoke|join|limit|lookup|mv-apply|mv-expand|mvexpand|order|parse|parse-where|print|project|project-away|project-keep|project-rename|project-reorder|reduce|render|sample|sample-distinct|search|serialize|sort|summarize|take|top|top-hitters|top-nested|union|where)\\b"
+    },
+    "special-functions": {
+      "comment": "Kusto query-level functions and statements",
+      "name": "keyword.other.kusto",
+      "match": "\\b(let|set|database|cluster|table|materialize|toscalar|ingestion_time)\\b"
+    },
+    "aggregation-functions": {
+      "comment": "Kusto aggregation functions used inside summarize",
+      "name": "support.function.aggregate.kusto",
+      "match": "\\b(any|anyif|arg_max|arg_min|avg|avgif|binary_all_and|binary_all_or|binary_all_xor|buildschema|count|countif|dcount|dcountif|hll|hll_merge|make_bag|make_bag_if|make_list|make_list_if|make_list_with_nulls|make_set|make_set_if|max|maxif|median|min|minif|percentile|percentiles|percentiles_array|percentilew|percentilesw|percentilesw_array|stdev|stdevif|stdevp|sum|sumif|take_any|take_anyif|tdigest|tdigest_merge|variance|varianceif|variancep)\\b"
+    },
+    "scalar-string-functions": {
+      "comment": "Kusto scalar string manipulation functions",
+      "name": "support.function.string.kusto",
+      "match": "\\b(base64_decode_toarray|base64_decode_tostring|base64_encode_fromarray|base64_encode_tostring|countof|extract|extract_all|extractjson|format_bytes|has_any_index|indexof|indexof_regex|isascii|isempty|isnotempty|isutf8|make_string|parse_csv|parse_path|parse_url|parse_urlquery|parse_user_agent|parse_version|replace_regex|replace_string|replace_strings|reverse|split|strcat|strcat_array|strcat_delim|strcmp|string_size|strlen|strrep|substring|toupper|tolower|translate|trim|trim_end|trim_start|url_decode|url_encode|url_encode_component)\\b"
+    },
+    "scalar-datetime-functions": {
+      "comment": "Kusto scalar datetime and timespan functions",
+      "name": "support.function.datetime.kusto",
+      "match": "\\b(ago|bin_at|bin_auto|datetime_add|datetime_diff|datetime_local_to_utc|datetime_part|datetime_utc_to_local|dayofmonth|dayofweek|dayofyear|endofday|endofmonth|endofweek|endofyear|format_datetime|format_timespan|getmonth|getyear|gmtime|hourofday|make_datetime|make_timespan|monthofyear|now|startofday|startofmonth|startofweek|startofyear|unixtime_microseconds_todatetime|unixtime_milliseconds_todatetime|unixtime_nanoseconds_todatetime|unixtime_seconds_todatetime|weekofyear)\\b"
+    },
+    "scalar-math-functions": {
+      "comment": "Kusto scalar math and bitwise functions",
+      "name": "support.function.math.kusto",
+      "match": "\\b(abs|acos|asin|atan|atan2|beta_cdf|beta_inv|beta_pdf|binary_and|binary_not|binary_or|binary_shift_left|binary_shift_right|binary_xor|bitset_count_ones|ceiling|convert_angle|convert_energy|convert_length|convert_mass|convert_speed|convert_temperature|convert_volume|cos|cot|degrees|dcount_intersect|exp|exp10|exp2|floor|gamma|log|log10|log2|loggamma|max_of|min_of|pi|pow|radians|rand|round|sign|sin|sqrt|tan|welch_test)\\b"
+    },
+    "scalar-array-bag-functions": {
+      "comment": "Kusto scalar array and property bag functions",
+      "name": "support.function.array.kusto",
+      "match": "\\b(array_concat|array_iif|array_index_of|array_length|array_reverse|array_rotate_left|array_rotate_right|array_shift_left|array_shift_right|array_slice|array_sort_asc|array_sort_desc|array_split|bag_has_key|bag_keys|bag_merge|bag_pack|bag_remove_keys|bag_set_key|bag_unpack|bag_zip|pack|pack_all|pack_array|range|repeat|series_abs|series_add|series_ceiling|series_decompose|series_decompose_anomalies|series_decompose_forecast|series_divide|series_equals|series_exp|series_fft|series_fill_backward|series_fill_const|series_fill_forward|series_fill_linear|series_fit_2lines|series_fit_2lines_dynamic|series_fit_line|series_fit_line_dynamic|series_fit_poly|series_floor|series_greater|series_greater_equals|series_ifft|series_less|series_less_equals|series_log|series_multiply|series_not_equals|series_outliers|series_pearson_correlation|series_periods_detect|series_periods_validate|series_pow|series_seasonal|series_sin|series_sqrt|series_stats|series_stats_dynamic|series_subtract|series_sum|set_difference|set_has_element|set_intersect|set_union|zip)\\b"
+    },
+    "scalar-geo-functions": {
+      "comment": "Kusto geospatial scalar functions",
+      "name": "support.function.geo.kusto",
+      "match": "\\b(geo_distance_2points|geo_distance_point_to_line|geo_distance_point_to_polygon|geo_geohash_to_central_point|geo_geohash_to_polygon|geo_intersection_2lines|geo_intersection_2polygons|geo_intersection_line_with_polygon|geo_intersects_2lines|geo_intersects_2polygons|geo_intersects_line_with_polygon|geo_line_centroid|geo_line_densify|geo_line_length|geo_point_in_circle|geo_point_in_polygon|geo_point_to_geohash|geo_point_to_h3cell|geo_point_to_s2cell|geo_polygon_area|geo_polygon_centroid|geo_polygon_densify|geo_polygon_perimeter|geo_polygon_simplify|geo_polygon_to_s2cells|geo_simplify_polygons_array|geo_union_lines_array|geo_union_polygons_array)\\b"
+    },
+    "scalar-ip-functions": {
+      "comment": "Kusto IP address scalar functions",
+      "name": "support.function.ip.kusto",
+      "match": "\\b(has_ipv4|has_ipv4_prefix|ipv4_compare|ipv4_is_in_any_range|ipv4_is_in_range|ipv4_is_match|ipv4_is_private|ipv4_netmask_suffix|ipv4_range_to_cidr_list|ipv6_compare|ipv6_is_match|parse_ipv4|parse_ipv4_mask|parse_ipv6|parse_ipv6_mask)\\b"
+    },
+    "scalar-type-functions": {
+      "comment": "Kusto type conversion and inspection functions",
+      "name": "support.function.type.kusto",
+      "match": "\\b(gettype|isfinite|isinf|isnan|isnotnull|isnull|tobool|todatetime|todouble|tolong|toint|toreal|tostring|totimespan|typeof|parse_bytes|parse_json|parse_xml|todynamic|treepath)\\b"
+    },
+    "scalar-misc-functions": {
+      "comment": "Kusto miscellaneous scalar functions",
+      "name": "support.function.kusto",
+      "match": "\\b(bin|coalesce|column_ifexists|current_cluster_endpoint|current_database|current_principal|current_principal_details|current_principal_is_member_of|extent_id|extent_tags|hash|hash_combine|hash_many|hash_md5|hash_sha1|hash_sha256|new_guid|not|percentile_tdigest|percentrank_tdigest|predict)\\b"
+    },
+    "keywords": {
+      "comment": "Kusto logical, comparison and membership operators",
+      "name": "keyword.operator.kusto",
+      "match": "\\b(and|between|by|contains|contains_cs|endswith|endswith_cs|has|has_all|has_any|has_cs|hasprefix|hasprefix_cs|hassuffix|hassuffix_cs|in|matches\\s+regex|not|on|or|startswith|startswith_cs|with)\\b"
+    },
+    "data-types": {
+      "comment": "Kusto data type literals",
+      "name": "storage.type.kusto",
+      "match": "\\b(bool|boolean|datetime|dynamic|guid|int|long|real|double|string|timespan|decimal)\\b"
+    },
+    "constants": {
+      "comment": "Kusto language constants",
+      "name": "constant.language.kusto",
+      "match": "\\b(true|false|null|nan|inf)\\b"
+    },
+    "variables": {
+      "comment": "Kusto column/parameter substitution via curly-brace syntax",
+      "name": "variable.other.kusto",
+      "match": "\\{[^}]*\\}"
+    },
+    "numbers": {
+      "comment": "Kusto numeric literals (integer, float, hex)",
+      "name": "constant.numeric.kusto",
+      "match": "\\b((0(x|X)[0-9a-fA-F]*)|(([0-9]+\\.?[0-9]*|(\\.[0-9]+))((e|E)(\\+|-)?[0-9]+)?))\\b"
+    }
+  }
+}

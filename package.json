@@ -2,10 +2,14 @@
   "name": "kusto-syntax-highlighting",
   "displayName": "Azure Log Analytics (Kusto) Syntax Highlighting",
   "description": "Support for the Azure Log Analytics (Kusto) language syntax in Visual Studio Code.",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "publisher": "josin",
   "homepage": "https://github.com/josin/kusto-syntax-highlighting",
   "icon": "images/kusto_logo.png",
+  "galleryBanner": {
+    "color": "#0078D4",
+    "theme": "dark"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/josin/kusto-syntax-highlighting"
@@ -14,14 +18,18 @@
     "url": "https://github.com/josin/kusto-syntax-highlighting/issues"
   },
   "engines": {
-    "vscode": "^1.21.0"
+    "vscode": "^1.74.0"
   },
   "categories": [
-    "Languages"
+    "Programming Languages"
   ],
   "keywords": [
     "kusto",
+    "kql",
     "azure",
+    "log analytics",
+    "azure data explorer",
+    "azure monitor",
     "language",
     "highlight",
     "syntax"
@@ -33,11 +41,13 @@
         "id": "kusto",
         "aliases": [
           "Kusto",
+          "KQL",
           "kusto"
         ],
         "extensions": [
           ".csl",
-          ".kusto"
+          ".kusto",
+          ".kql"
         ],
         "configuration": "./language-configuration.json"
       }
@@ -46,7 +56,7 @@
       {
         "language": "kusto",
         "scopeName": "source.kusto",
-        "path": "./syntaxes/kusto.tmLanguage"
+        "path": "./syntaxes/kusto.tmLanguage.json"
       }
     ]
   }
