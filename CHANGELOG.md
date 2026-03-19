@@ -7,6 +7,52 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [2.0.1] - 2026-03-19
+
+### Changes
+- fix: replace all 'main' branch references with 'master' in workflows and changelog
+- fix: replace step-level branch guard with job-level if condition in release workflow
+- Initial plan
+- Initial plan
+- fix: address release workflow review comments
+- feat: open PR for version bump, auto-generate CHANGELOG, chain stages
+- feat: upload VSIX artifact in build workflow for PR promotion pipeline
+- Initial plan
+- Fix release workflow: validate custom version before npm version bump
+- Initial plan
+- fix: count disambiguation, case-insensitive matching, hex digit requirement
+- Add copilot instructions and PR validation build workflow
+- Initial plan
+- fix: address all 6 PR review comments on grammar correctness
+- Update extension logo to new Kusto Syntax Highlighting design (issue #19)
+- Add GitHub Actions workflows for versioning and publishing extension
+- Replace extension logo with new navy/KQL bar-chart design (issue #19)
+- Initial plan
+- Potential fix for pull request finding
+- Initial plan
+- feat: modernise KQL grammar with full language coverage, new file types, and snippets
+- fix: VS Code extension compatibility overhaul — all 14 issues resolved
+- Expand README with detailed setup and usage documentation
+- Fill in copyright owner and year in LICENSE appendix boilerplate
+- Update branding from Azure Log Analytics (Kusto) to Kusto Query Language (KQL)
+- Add all missing operators from latest KQL docs list
+- Update the list
+- Potential fix for pull request finding
+- Add Kusto query execution command to VS Code extension
+- Add full Apache 2.0 License text and NOTICE file for compliance
+- Fix: disambiguate operators from operands by requiring pipe before control keywords
+- Fix create-or-alter highlighting by adding compound command pattern before or keyword
+- Initial plan
+- Add missing tabular operators to Kusto grammar and fix project-away bug
+- Add .kql file extension support
+- Initial plan
+- Initial plan
+- Initial plan
+- Add missing operators
+- Adding extension icon
+- Initial commit.
+
+
 ## [2.0.0] - 2026-03-19
 
 ### Fixed
