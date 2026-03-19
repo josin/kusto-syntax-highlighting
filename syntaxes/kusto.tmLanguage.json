@@ -31,13 +31,18 @@
         {
           "name": "comment.line.double-slash.kusto",
           "match": "//.*$"
+        },
+        {
+          "name": "comment.block.kusto",
+          "begin": "/\\*",
+          "end": "\\*/"
         }
       ]
     },
     "strings-double": {
       "name": "string.quoted.double.kusto",
       "begin": "\"",
-      "end": "\"",
+      "end": "(?<!\\\\)\"",
       "patterns": [
         {
           "name": "constant.character.escape.kusto",
@@ -48,7 +53,7 @@
     "strings-single": {
       "name": "string.quoted.single.kusto",
       "begin": "'",
-      "end": "'",
+      "end": "(?<!\\\\)'",
       "patterns": [
         {
           "name": "constant.character.escape.kusto",
@@ -59,7 +64,7 @@
     "tabular-operators": {
       "comment": "Kusto tabular operators that transform tables in a pipe expression",
       "name": "keyword.control.kusto",
-      "match": "\\b(as|consume|count|datatable|distinct|evaluate|extend|externaldata|facet|find|fork|getschema|invoke|join|limit|lookup|mv-apply|mv-expand|mvexpand|order|parse|parse-where|print|project|project-away|project-keep|project-rename|project-reorder|reduce|render|sample|sample-distinct|search|serialize|sort|summarize|take|top|top-hitters|top-nested|union|where)\\b"
+      "match": "\\b(as|consume|datatable|distinct|evaluate|extend|externaldata|facet|find|fork|getschema|invoke|join|limit|lookup|mv-apply|mv-expand|mvexpand|order|parse|parse-where|print|project|project-away|project-keep|project-rename|project-reorder|reduce|render|sample|sample-distinct|search|serialize|sort|summarize|take|top|top-hitters|top-nested|union|where)\\b"
     },
     "special-functions": {
       "comment": "Kusto query-level functions and statements",
@@ -109,7 +114,7 @@
     "scalar-misc-functions": {
       "comment": "Kusto miscellaneous scalar functions",
       "name": "support.function.kusto",
-      "match": "\\b(bin|coalesce|column_ifexists|current_cluster_endpoint|current_database|current_principal|current_principal_details|current_principal_is_member_of|extent_id|extent_tags|hash|hash_combine|hash_many|hash_md5|hash_sha1|hash_sha256|new_guid|not|percentile_tdigest|percentrank_tdigest|predict)\\b"
+      "match": "\\b(bin|coalesce|column_ifexists|current_cluster_endpoint|current_database|current_principal|current_principal_details|current_principal_is_member_of|extent_id|extent_tags|hash|hash_combine|hash_many|hash_md5|hash_sha1|hash_sha256|new_guid|percentile_tdigest|percentrank_tdigest|predict)\\b"
     },
     "keywords": {
       "comment": "Kusto logical, comparison and membership operators",
@@ -129,12 +134,12 @@
     "variables": {
       "comment": "Kusto column/parameter substitution via curly-brace syntax",
       "name": "variable.other.kusto",
-      "match": "\\{[^}]*\\}"
+      "match": "\\{[^}\\r\\n]*\\}"
     },
     "numbers": {
       "comment": "Kusto numeric literals (integer, float, hex)",
       "name": "constant.numeric.kusto",
-      "match": "\\b((0(x|X)[0-9a-fA-F]*)|(([0-9]+\\.?[0-9]*|(\\.[0-9]+))((e|E)(\\+|-)?[0-9]+)?))\\b"
+      "match": "\\b((0(x|X)[0-9a-fA-F]+)|(([0-9]+\\.?[0-9]*|(\\.[0-9]+))((e|E)(\\+|-)?[0-9]+)?))\\b"
     }
   }
 }
