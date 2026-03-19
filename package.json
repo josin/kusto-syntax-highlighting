@@ -2,7 +2,7 @@
   "name": "kusto-syntax-highlighting",
   "displayName": "Kusto Query Language (KQL) Syntax Highlighting",
   "description": "Support for the Kusto Query Language (KQL) syntax in Visual Studio Code. Used in Azure Monitor, Azure Data Explorer, Microsoft Sentinel, and Microsoft Fabric.",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "publisher": "josin",
   "homepage": "https://github.com/josin/kusto-syntax-highlighting",
   "icon": "images/kusto_logo.png",
