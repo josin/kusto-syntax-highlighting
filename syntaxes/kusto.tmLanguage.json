@@ -1,0 +1,103 @@
+{
+    "scopeName": "source.kusto",
+    "fileTypes": ["csl", "kusto", "kql"],
+    "name": "Kusto",
+    "uuid": "FF0550E0-3A29-11E3-AA6E-0800200C9B77",
+    "patterns": [
+        { "include": "#block-comment" },
+        { "include": "#line-comment" },
+        { "include": "#verbatim-string" },
+        { "include": "#obfuscated-string" },
+        { "include": "#double-quoted-string" },
+        { "include": "#single-quoted-string" },
+        { "include": "#type-cast-literal" },
+        { "include": "#template-variable" },
+        { "include": "#management-command" },
+        { "include": "#constants" },
+        { "include": "#numbers" },
+        { "include": "#pipe-operator" },
+        { "include": "#aggregate-function" },
+        { "include": "#scalar-function" },
+        { "include": "#filter-operator" },
+        { "include": "#keyword" }
+    ],
+    "repository": {
+        "block-comment": {
+            "begin": "/\\*",
+            "end": "\\*/",
+            "name": "comment.block.kusto"
+        },
+        "line-comment": {
+            "match": "//.*$",
+            "name": "comment.line.double-slash.kusto"
+        },
+        "verbatim-string": {
+            "match": "@\"[^\"]*\"",
+            "name": "string.quoted.double.verbatim.kusto"
+        },
+        "obfuscated-string": {
+            "match": "h\"[^\"]*\"|h'[^']*'",
+            "name": "string.quoted.other.obfuscated.kusto"
+        },
+        "double-quoted-string": {
+            "begin": "\"",
+            "end": "\"",
+            "name": "string.quoted.double.kusto",
+            "patterns": [
+                { "match": "\\\\.", "name": "constant.character.escape.kusto" }
+            ]
+        },
+        "single-quoted-string": {
+            "begin": "'",
+            "end": "'",
+            "name": "string.quoted.single.kusto",
+            "patterns": [
+                { "match": "\\\\.", "name": "constant.character.escape.kusto" }
+            ]
+        },
+        "type-cast-literal": {
+            "match": "\\b(bool|boolean|datetime|decimal|double|dynamic|guid|int|long|real|timespan|uuid)(?=\\s*\\()",
+            "name": "support.type.kusto"
+        },
+        "template-variable": {
+            "match": "\\{[^}]*\\}",
+            "name": "string.interpolated.kusto"
+        },
+        "management-command": {
+            "match": "^\\s*(\\.(?:[a-z][a-z-]*))\\b",
+            "captures": {
+                "1": { "name": "entity.name.tag.kusto" }
+            }
+        },
+        "constants": {
+            "match": "\\b(true|false|null)\\b",
+            "name": "constant.language.kusto"
+        },
+        "numbers": {
+            "match": "\\b((0(x|X)[0-9a-fA-F]*)|(([0-9]+\\.?[0-9]*)|(\\.?[0-9]+))((e|E)(\\+|-)?[0-9]+)?)(L|l|UL|ul|u|U|F|f|ll|LL|ull|ULL)?\\b",
+            "name": "constant.numeric.kusto"
+        },
+        "pipe-operator": {
+            "comment": "Hyphenated operators must appear before their non-hyphenated prefixes to prevent partial matches.",
+            "match": "\\b(make-series|mv-apply|mv-expand|mvexpand|parse-kv|parse-where|project-away|project-keep|project-rename|project-reorder|sample-distinct|top-hitters|top-nested|as|consume|count|datatable|distinct|evaluate|externaldata|extend|facet|find|fork|getschema|invoke|join|limit|lookup|order|parse|partition|print|project|reduce|render|sample|scan|search|serialize|sort|summarize|take|top|union|where)\\b",
+            "name": "keyword.control.kusto"
+        },
+        "aggregate-function": {
+            "match": "\\b(any|anyif|arg_max|arg_min|avg|avgif|buildschema|count|countif|dcount|dcountif|dcount_hll|hll|hll_if|hll_merge|make_bag|make_bag_if|make_list|make_list_if|make_list_with_nulls|make_set|make_set_if|makelist|makeset|max|maxif|min|minif|percentile|percentileif|percentiles|percentiles_array|percentile_tdigest|percentiles_array_tdigest|percentrank_tdigest|stdev|stdevif|stdevp|sum|sumif|take_any|take_anyif|tdigest|tdigest_merge|merge_tdigest|variance|varianceif|variancep)\\b",
+            "name": "keyword.aggregate.kusto"
+        },
+        "scalar-function": {
+            "match": "\\b(abs|acos|ago|array_concat|array_iif|array_index_of|array_length|array_reverse|array_rotate_left|array_rotate_right|array_shift_left|array_shift_right|array_slice|array_sort_asc|array_sort_desc|array_split|array_sum|asin|atan|atan2|bag_has_key|bag_keys|bag_merge|bag_pack|bag_remove_keys|bag_set_key|bag_zip|base64_decode_toguid|base64_decode_tostring|base64_encode_fromguid|base64_encode_tostring|beta_cdf|beta_inv|beta_pdf|bin|bin_at|bin_auto|case|ceiling|cluster|coalesce|cos|cot|countof|cursor_after|cursor_before_or_at|cursor_current|current_cluster_endpoint|current_database|current_principal|current_principal_details|current_principal_is_member_of|database|datetime_add|datetime_diff|datetime_part|dayofmonth|dayofweek|dayofyear|degrees|dynamic_to_json|endofday|endofmonth|endofweek|endofyear|exp|exp2|exp10|extent_id|extent_tags|extract|extract_all|extractjson|floor|format_bytes|format_datetime|format_ipv4|format_ipv4_mask|format_timespan|frombase64|gamma|geo_distance_2points|geo_distance_point_to_line|geo_distance_point_to_polygon|geo_geohash_neighbors|geo_geohash_to_central_point|geo_geohash_to_polygon|geo_h3cell_children|geo_h3cell_level|geo_h3cell_neighbors|geo_h3cell_parent|geo_h3cell_rings|geo_h3cell_to_central_point|geo_h3cell_to_polygon|geo_intersection_2lines|geo_intersection_2polygons|geo_intersection_line_with_polygon|geo_line_centroid|geo_line_densify|geo_line_length|geo_line_simplify|geo_line_to_s2cells|geo_point_in_circle|geo_point_in_polygon|geo_point_to_geohash|geo_point_to_h3cell|geo_point_to_s2cell|geo_polygon_area|geo_polygon_centroid|geo_polygon_densify|geo_polygon_perimeter|geo_polygon_simplify|geo_polygon_to_s2cells|geo_polygon_union|geo_s2cell_level|geo_s2cell_neighbors|geo_s2cell_to_central_point|geo_s2cell_to_polygon|geo_union_lines|geo_union_polygons|getmonth|getyear|hash|hash_combine|hash_many|hash_md5|hash_sha256|hash_xxhash64|hourofday|iif|iff|indexof|indexof_regex|ingestion_time|ipv4_compare|ipv4_is_in_any_range|ipv4_is_in_range|ipv4_is_match|ipv4_is_private|ipv4_netmask_suffix|ipv4_range_to_cidr_list|ipv6_compare|ipv6_is_match|isempty|isfinite|isinf|isnan|isnotempty|isnotnull|isnull|log|log2|log10|loggamma|ltrim|make_datetime|make_timespan|materialize|materialized_view|max_of|min_of|monthofyear|new_guid|next|normalize_path|now|pack|pack_all|pack_array|parse_csv|parse_ipv4|parse_ipv4_mask|parse_ipv6|parse_ipv6_mask|parse_json|parse_url|parse_urlquery|parse_version|parse_xml|pi|pow|prev|punycode_from_string|punycode_to_string|radians|rand|replace|replace_regex|replace_string|replace_strings|reverse|round|row_cumsum|row_number|row_rank_dense|row_rank_min|row_window_session|rtrim|series_add|series_decompose|series_decompose_anomalies|series_decompose_forecast|series_divide|series_equals|series_exp_smoothing|series_fill_backward|series_fill_const|series_fill_forward|series_fill_linear|series_fit_2lines|series_fit_line|series_fit_poly|series_greater|series_greater_equals|series_iir|series_less|series_less_equals|series_multiply|series_not_equals|series_outliers|series_pearson_correlation|series_periods_detect|series_periods_validate|series_pow|series_seasonal|series_stats|series_stats_dynamic|series_subtract|series_sum|set_difference|set_has_element|set_intersect|set_union|sign|sin|split|sqrt|startofday|startofmonth|startofweek|startofyear|strcat|strcat_array|strcat_delim|string_size|strlen|substring|table|tan|tobase64|tobool|todatetime|todouble|todynamic|toguid|toint|tolong|toreal|tostring|totimespan|tounsignedlong|toupper|tolower|toscalar|translate|trim|trim_end|trim_start|typeof|unixtime_microseconds_todatetime|unixtime_milliseconds_todatetime|unixtime_nanoseconds_todatetime|unixtime_seconds_todatetime|url_decode|url_encode|url_encode_component|weekofyear|yearofweek|zip)\\b",
+            "name": "keyword.functions.kusto"
+        },
+        "filter-operator": {
+            "comment": "String and membership comparison operators used in filter expressions.",
+            "match": "\\b(between|contains_cs|contains|endswith_cs|endswith|has_all|has_any|has_cs|has|in|matches|startswith_cs|startswith)\\b",
+            "name": "keyword.operator.kusto"
+        },
+        "keyword": {
+            "match": "\\b(let|by|on|kind|with|asc|desc|and|or|not|of|to|from|step)\\b",
+            "name": "keyword.other.kusto"
+        }
+    }
+}
