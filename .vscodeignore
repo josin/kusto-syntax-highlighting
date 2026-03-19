@@ -4,4 +4,8 @@
 .git/**
 vsc-extension-quickstart.md
 examples/**
-CHANGELOG.md
+src/**
+tsconfig.json
+node_modules/**
+out/test/**
+**/*.map

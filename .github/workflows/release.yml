@@ -1,0 +1,65 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_type:
+        description: 'Version bump type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      custom_version:
+        description: 'Custom version (e.g. 1.2.3). Overrides version_type when provided.'
+        required: false
+        type: string
+
+jobs:
+  release:
+    name: Bump version and create release tag
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump version (custom)
+        if: ${{ inputs.custom_version != '' }}
+        run: npm version ${{ inputs.custom_version }} --no-git-tag-version
+
+      - name: Bump version (preset)
+        if: ${{ inputs.custom_version == '' }}
+        run: npm version ${{ inputs.version_type }} --no-git-tag-version
+
+      - name: Read new version
+        id: new_version
+        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Commit version bump
+        run: |
+          git add package.json package-lock.json
+          git commit -m "chore: release v${{ steps.new_version.outputs.version }}"
+
+      - name: Create and push tag
+        run: |
+          git tag "v${{ steps.new_version.outputs.version }}"
+          git push origin HEAD
+          git push origin "v${{ steps.new_version.outputs.version }}"

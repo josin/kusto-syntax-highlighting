@@ -21,6 +21,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - `constants` grammar scope for `true`, `false`, `null`, `nan`, `inf`
 - `keywords.operator` scope for logical operators: `and`, `or`, `not`, `in`, `has`, `contains`, `between`, `startswith`, `endswith`, `matches regex`, etc.
 - `$schema` reference in grammar file for validation tooling
+- Block comment grammar rule (`/* */`) so block comments are correctly tokenized
 
 ### Changed
 - Grammar converted from legacy Apple Plist XML (`.tmLanguage`) to JSON (`.tmLanguage.json`) — the modern VS Code standard
@@ -32,18 +33,32 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   - `comment` → `comment.line.double-slash.kusto`
   - `string.variable` → `variable.other.kusto`
   - `constant.numeric` → `constant.numeric.kusto`
-- String patterns now use `begin`/`end` pairs (support multi-character and escaped strings)
+- String patterns now use `begin`/`end` pairs with negative-lookbehind end patterns so escaped quotes (`\"`, `\'`) no longer terminate strings early
 - `autoClosingPairs` in language configuration converted to object format with `notIn: ["string", "comment"]` guards for quote pairs
-- `engines.vscode` updated from `^1.21.0` to `^1.74.0`
+- `engines.vscode` updated from `^1.21.0` to `^1.75.0`
 - `categories` updated from `"Languages"` (deprecated) to `"Programming Languages"`
 - `keywords` in manifest expanded with `kql`, `azure data explorer`, `azure monitor`, `log analytics`
-- README rewritten with feature list, example query, file-extension table, and Marketplace badges
-- `.vscodeignore` tightened to exclude screenshot images, `.git/`, and `CHANGELOG.md` from the installed package
+- README rewritten with feature list, example query, run-query setup guide, and Marketplace badges
+- `.vscodeignore` tightened to exclude build artifacts from the installed package
 
 ### Fixed
 - Regex bug where `project|-away` was parsed as two separate alternatives instead of the single keyword `project-away`
+- String `end` patterns now use `(?<!\\)"` / `(?<!\\)'` to prevent escaped quotes from terminating strings early
+- Variable substitution regex restricted to single line to prevent unbounded multi-line matches
+- Hex literal regex now requires at least one digit after `0x` (changed `*` to `+`)
 - Duplicate `sort` entry removed from tabular operators list
-- Duplicate `any` entry removed from scalar functions list
+- `not` removed from `scalar-misc-functions` (it belongs only in `keywords` as `keyword.operator.kusto`)
+- `count` removed from `tabular-operators` (it belongs in `aggregation-functions`)
+
+## [1.1.0] - 2024-05-01
+
+### Added
+- **Run Kusto Query** command (`kusto.runQuery`) to execute queries against an Azure Data Explorer cluster
+- Results are displayed in the **Kusto Results** output channel
+- New keyboard shortcut: `Ctrl+Alt+E` / `Cmd+Alt+E` when editing Kusto files
+- Run button (▶) added to the editor toolbar for `.kusto` / `.csl` files
+- New settings: `kusto.clusterUrl`, `kusto.database`, `kusto.loginMode`
+- Supports Azure CLI (`AzureLogin`), interactive browser (`InteractiveLogin`), and managed identity (`ManagedIdentity`) authentication
 
 ## [1.0.1] - 2018-09-17
 
@@ -54,4 +69,3 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 - Initial release with basic syntax highlighting for `.csl` and `.kusto` files
-
