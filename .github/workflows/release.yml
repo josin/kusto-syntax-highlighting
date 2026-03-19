@@ -181,6 +181,21 @@ jobs:
 
           node /tmp/update_changelog.js
 
+      - name: Compile TypeScript
+        run: npm ci && npm run compile
+
+      - name: Install vsce
+        run: npm install -g @vscode/vsce
+
+      - name: Package extension
+        run: vsce package --out kusto-syntax-highlighting.vsix
+
+      - name: Upload VSIX artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: kusto-syntax-highlighting-vsix-release
+          path: kusto-syntax-highlighting.vsix
+
       - name: Commit version bump, tag, and push
         env:
           NEW_VERSION: ${{ steps.new_version.outputs.version }}
@@ -196,30 +211,15 @@ jobs:
           git add package.json package-lock.json CHANGELOG.md
           git commit -m "chore: release v${NEW_VERSION}"
 
-          # Create the tag locally before pushing so that master commit and tag
-          # are pushed together in one operation, reducing the window where a
-          # commit could exist without its corresponding tag.
-          git tag "$TAG"
-
           # Rebase onto the latest master to handle any commits that landed after
-          # this workflow checked out the repository, then push both together.
+          # this workflow checked out the repository, so the tag points at the
+          # final, rebased release commit.
           git pull --rebase origin master
-          git push origin master "refs/tags/${TAG}"
 
-      - name: Compile TypeScript
-        run: npm ci && npm run compile
-
-      - name: Install vsce
-        run: npm install -g @vscode/vsce
-
-      - name: Package extension
-        run: vsce package --out kusto-syntax-highlighting.vsix
-
-      - name: Upload VSIX artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: kusto-syntax-highlighting-vsix-release
-          path: kusto-syntax-highlighting.vsix
+          # Create the tag locally after rebasing so that master commit and tag
+          # are pushed together in one atomic operation.
+          git tag "$TAG"
+          git push --atomic origin master "refs/tags/${TAG}"
 
   publish:
     name: Publish to Marketplace and create GitHub Release
