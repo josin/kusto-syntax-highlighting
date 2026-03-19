@@ -7,9 +7,11 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
-### Added
-- CI pipeline for extension publishing: PRs trigger a Build job that compiles and packages the `.vsix` artifact; the Release workflow (manual dispatch) bumps the version and creates a tag; the Publish workflow fires on that tag to publish to the VS Code Marketplace and attach the `.vsix` to a GitHub Release.
-- Build workflow now uploads the packaged `.vsix` as a downloadable workflow artifact (retained 30 days) so builds can be inspected before promoting to a release.
+### Changed
+- **Release workflow** (`release.yml`) now consists of two sequential jobs:
+  1. `build` — validates the extension compiles and packages correctly (same as the PR build).
+  2. `open-release-pr` — bumps the version, auto-generates a `CHANGELOG.md` entry from the git log since the last tag, pushes a `release/vX.Y.Z` branch, and opens a PR against `main`. Merging the PR is the manual promotion gate.
+- **Publish workflow** (`publish.yml`) is now triggered by merging a `release/v*` PR instead of by a direct tag push. It creates the `vX.Y.Z` tag on the merge commit, then builds, publishes to the Marketplace, and creates a GitHub Release. Configuring a `publish` GitHub Environment with required reviewers adds an optional manual approval gate before the Marketplace publish.
 
 ## [2.0.0] - 2026-03-19
 
