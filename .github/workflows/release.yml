@@ -5,7 +5,7 @@ name: Release
 # Jobs:
 #   build            – validates the extension compiles and packages correctly.
 #   open-release-pr  – bumps the version, updates CHANGELOG.md from the git log,
-#                      pushes a release/vX.Y.Z branch, and opens a PR against main.
+#                      pushes a release/vX.Y.Z branch, and opens a PR against master.
 #
 # Merging the opened PR is the manual promotion gate that triggers Stage 3
 # (publish.yml), which tags, publishes to the Marketplace, and creates a
@@ -67,19 +67,13 @@ jobs:
   open-release-pr:
     name: Open release PR
     needs: build
+    if: github.ref_name == 'master'
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
 
     steps:
-      - name: Ensure workflow runs on main
-        run: |
-          if [ "${{ github.ref_name }}" != "main" ]; then
-            echo "::error::This workflow must be dispatched from the 'main' branch (current: ${{ github.ref_name }}). Aborting."
-            exit 1
-          fi
-
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -230,5 +224,5 @@ jobs:
           gh pr create \
             --title "chore: release v${NEW_VERSION}" \
             --body-file /tmp/pr_body.md \
-            --base main \
+            --base master \
             --head "$BRANCH"

@@ -7,10 +7,13 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Fixed
+- **Release workflow** (`release.yml`): the `open-release-pr` job now uses a job-level `if: github.ref_name == 'master'` condition instead of a step-level `exit 1` check. When the workflow is dispatched from a non-`master` branch the job is now **skipped** (not failed), which is the correct GitHub Actions pattern.
+
 ### Changed
 - **Release workflow** (`release.yml`) now consists of two sequential jobs:
   1. `build` — validates the extension compiles and packages correctly (same as the PR build).
-  2. `open-release-pr` — bumps the version, auto-generates a `CHANGELOG.md` entry from the git log since the last tag, pushes a `release/vX.Y.Z` branch, and opens a PR against `main`. Merging the PR is the manual promotion gate.
+  2. `open-release-pr` — bumps the version, auto-generates a `CHANGELOG.md` entry from the git log since the last tag, pushes a `release/vX.Y.Z` branch, and opens a PR against `master`. Merging the PR is the manual promotion gate.
 - **Publish workflow** (`publish.yml`) is now triggered by merging a `release/v*` PR instead of by a direct tag push. It creates the `vX.Y.Z` tag on the merge commit, then builds, publishes to the Marketplace, and creates a GitHub Release. Configuring a `publish` GitHub Environment with required reviewers adds an optional manual approval gate before the Marketplace publish.
 
 ## [2.0.0] - 2026-03-19
