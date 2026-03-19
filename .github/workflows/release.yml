@@ -41,6 +41,15 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+      - name: Validate custom version
+        if: ${{ inputs.custom_version != '' }}
+        run: |
+          CURRENT=$(node -p "require('./package.json').version")
+          if [ "$CURRENT" = "${{ inputs.custom_version }}" ]; then
+            echo "::error::Version '${{ inputs.custom_version }}' is already the current version in package.json. Please specify a different version."
+            exit 1
+          fi
+
       - name: Bump version (custom)
         if: ${{ inputs.custom_version != '' }}
         run: npm version ${{ inputs.custom_version }} --no-git-tag-version
