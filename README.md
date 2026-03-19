@@ -1,18 +1,18 @@
 # Kusto Language Support
 
-Support for the Azure Log Analytics (Kusto) language syntax in Visual Studio Code, including syntax highlighting and the ability to run queries directly against an Azure Data Explorer cluster.
+Support for the Kusto Query Language (KQL) syntax in Visual Studio Code. KQL is used in Azure Monitor, Azure Data Explorer, Microsoft Sentinel, and Microsoft Fabric. Includes syntax highlighting and the ability to run queries directly against an Azure Data Explorer cluster.
 
 ## Features
 
-- **Syntax highlighting** for `.kusto` and `.csl` files
+- **Syntax highlighting** for `.kusto`, `.kql`, and `.csl` files
 - **Run queries** against an Azure Data Explorer (Kusto) cluster without leaving VS Code
 - Supports **Azure CLI**, **interactive browser**, and **managed identity** authentication
 
 ## Highlighting
 
-Adds highlighting support for Azure Log Analytics (Kusto) (`.csl` and `.kusto`). This syntax is based on [TextmateBundleInstaller](https://github.com/madskristensen/TextmateBundleInstaller) - [Kusto syntax](https://github.com/madskristensen/TextmateBundleInstaller/blob/master/src/Bundles/kusto/Syntaxes/kusto.plist).
+Adds highlighting support for Kusto Query Language (KQL) (`.csl` and `.kusto`). This syntax is based on [TextmateBundleInstaller](https://github.com/madskristensen/TextmateBundleInstaller) - [Kusto syntax](https://github.com/madskristensen/TextmateBundleInstaller/blob/master/src/Bundles/kusto/Syntaxes/kusto.plist).
 
-![Azure Log Analytics (Kusto) language syntax](/images/screenshot1.png?raw=true)
+![Kusto Query Language (KQL) syntax](/images/screenshot1.png?raw=true)
 
 ## Run Kusto Queries
 
