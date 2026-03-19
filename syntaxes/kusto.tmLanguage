@@ -18,13 +18,19 @@
         <array>
 			<dict>
 				<key>match</key>
+				<string>\.?(create-or-alter)\b</string>
+				<key>name</key>
+				<string>keyword.control.kusto</string>
+			</dict>
+			<dict>
+				<key>match</key>
 				<string>\b(let|count|ingestion_time|and|or|max|min|iff|isempty|isnotempty|log|sum|extract|now|false|true|makeset|makelist|any|arg_max|arg_min|any|dcount|sumif|countif|avg|materialize|pack|database|strcat|translate|substring|tostring|toscalar|strlen|contains|in|startswith|endswith|split|typeof)\b</string>
 				<key>name</key>
 				<string>keyword.functions.kusto</string>
 			</dict>
 			<dict>
 				<key>match</key>
-				<string>\b(where|summarize|extend|mvexpand|project|sort|project|-away|join|union|limit|order|sort|top|print|datatable)\b</string>
+				<string>\b(graph-mark-components|graph-shortest-paths|graph-to-table|graph-match|make-graph|make-series|not-contains-cs|not-contains|not-endswith-cs|not-endswith|not-equals-cs|not-equals|not-hasprefix-cs|not-hasprefix|not-hassuffix-cs|not-hassuffix|not-has-cs|not-has|not-in-cs|not-in|not-startswith-cs|not-startswith|not-between|project-by-names|project-keep|project-away|project-rename|project-reorder|project|top-hitters|top-nested|top|sample-distinct|sample|parse-kv|parse-where|parse|mv-expand|mv-apply|mvexpand|has-all|has-any|has-cs|has|contains-cs|endswith-cs|equals-cs|equals|hasprefix-cs|hasprefix|hassuffix-cs|hassuffix|in-cs|startswith-cs|matches-regex|macro-expand|where|summarize|extend|sort|join|union|limit|order|print|datatable|distinct|render|as|between|consume|evaluate|externaldata|facet|find|fork|getschema|invoke|lookup|notbetween|partition|range|reduce|scan|search|serialize|take)\b</string>
 				<key>name</key>
 				<string>keyword.control.kusto</string>
 			</dict>

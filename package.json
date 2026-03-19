@@ -2,7 +2,7 @@
   "name": "kusto-syntax-highlighting",
   "displayName": "Kusto Query Language (KQL) Syntax Highlighting",
   "description": "Support for the Kusto Query Language (KQL) syntax in Visual Studio Code. Used in Azure Monitor, Azure Data Explorer, Microsoft Sentinel, and Microsoft Fabric.",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "publisher": "josin",
   "homepage": "https://github.com/josin/kusto-syntax-highlighting",
   "icon": "images/kusto_logo.png",
@@ -14,7 +14,7 @@
     "url": "https://github.com/josin/kusto-syntax-highlighting/issues"
   },
   "engines": {
-    "vscode": "^1.21.0"
+    "vscode": "^1.75.0"
   },
   "categories": [
     "Languages"
@@ -27,6 +27,23 @@
     "syntax"
   ],
   "license": "Apache-2.0",
+  "main": "./out/extension",
+  "activationEvents": [
+    "onLanguage:kusto"
+  ],
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "npm run compile"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.75.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "azure-kusto-data": "^7.0.4"
+  },
   "contributes": {
     "languages": [
       {
@@ -37,6 +54,7 @@
         ],
         "extensions": [
           ".csl",
+          ".kql",
           ".kusto"
         ],
         "configuration": "./language-configuration.json"
@@ -48,6 +66,68 @@
         "scopeName": "source.kusto",
         "path": "./syntaxes/kusto.tmLanguage"
       }
-    ]
+    ],
+    "commands": [
+      {
+        "command": "kusto.runQuery",
+        "title": "Kusto: Run Query",
+        "icon": "$(play)"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "kusto.runQuery",
+        "key": "ctrl+alt+e",
+        "mac": "cmd+alt+e",
+        "when": "editorLangId == kusto"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "kusto.runQuery",
+          "when": "editorLangId == kusto",
+          "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "kusto.runQuery",
+          "when": "editorLangId == kusto",
+          "group": "kusto"
+        }
+      ]
+    },
+    "configuration": {
+      "type": "object",
+      "title": "Kusto",
+      "properties": {
+        "kusto.clusterUrl": {
+          "type": "string",
+          "default": "",
+          "description": "The Kusto cluster URL, e.g. https://mycluster.kusto.windows.net"
+        },
+        "kusto.database": {
+          "type": "string",
+          "default": "",
+          "description": "The default Kusto database to run queries against."
+        },
+        "kusto.loginMode": {
+          "type": "string",
+          "enum": [
+            "AzureLogin",
+            "InteractiveLogin",
+            "ManagedIdentity"
+          ],
+          "enumDescriptions": [
+            "Use credentials from 'az login' (Azure CLI). Recommended for local development.",
+            "Open a browser window to sign in interactively.",
+            "Use a managed identity (for Azure-hosted environments)."
+          ],
+          "default": "AzureLogin",
+          "description": "Authentication method used when connecting to the Kusto cluster."
+        }
+      }
+    }
   }
 }
