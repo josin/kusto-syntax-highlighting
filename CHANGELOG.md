@@ -49,6 +49,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Duplicate `sort` entry removed from tabular operators list
 - `not` removed from `scalar-misc-functions` (it belongs only in `keywords` as `keyword.operator.kusto`)
 - `count` removed from `tabular-operators` (it belongs in `aggregation-functions`)
+- All keyword, operator, and function patterns are now case-insensitive (`(?i)` flag) so mixed-case KQL (`WHERE`, `Summarize`, `DATETIME(…)`, etc.) is highlighted correctly
 
 ## [1.1.0] - 2024-05-01
 

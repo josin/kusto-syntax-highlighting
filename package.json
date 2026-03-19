@@ -76,6 +76,12 @@
         "path": "./syntaxes/kusto.tmLanguage.json"
       }
     ],
+    "snippets": [
+      {
+        "language": "kusto",
+        "path": "./snippets/kusto.json"
+      }
+    ],
     "commands": [
       {
         "command": "kusto.runQuery",

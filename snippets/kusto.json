@@ -1,0 +1,205 @@
+{
+    "Basic query": {
+        "prefix": "kql",
+        "body": [
+            "${1:TableName}",
+            "| where ${2:TimeGenerated} >= ago(${3:1h})",
+            "| where ${4:condition}",
+            "| project ${5:column1}, ${6:column2}",
+            "| limit ${7:100}"
+        ],
+        "description": "Basic KQL query structure"
+    },
+    "Let statement": {
+        "prefix": "let",
+        "body": [
+            "let ${1:name} = ${2:expression};",
+            "$0"
+        ],
+        "description": "KQL let statement for defining variables or tabular expressions"
+    },
+    "Where clause": {
+        "prefix": "where",
+        "body": ["| where ${1:condition}"],
+        "description": "KQL where filter"
+    },
+    "Where time filter": {
+        "prefix": "ago",
+        "body": ["| where ${1:TimeGenerated} >= ago(${2:1h})"],
+        "description": "KQL time range filter using ago()"
+    },
+    "Summarize": {
+        "prefix": "summarize",
+        "body": ["| summarize ${1:count()} by ${2:column}"],
+        "description": "KQL summarize aggregation"
+    },
+    "Summarize with time bin": {
+        "prefix": "summarizebin",
+        "body": ["| summarize ${1:count()} by bin(${2:TimeGenerated}, ${3:1h})"],
+        "description": "KQL summarize with time bucketing"
+    },
+    "Extend": {
+        "prefix": "extend",
+        "body": ["| extend ${1:newColumn} = ${2:expression}"],
+        "description": "KQL extend with a computed column"
+    },
+    "Project": {
+        "prefix": "project",
+        "body": ["| project ${1:column1}, ${2:column2}"],
+        "description": "KQL project to select columns"
+    },
+    "Project-away": {
+        "prefix": "project-away",
+        "body": ["| project-away ${1:column}"],
+        "description": "KQL project-away to exclude columns"
+    },
+    "Top N rows": {
+        "prefix": "top",
+        "body": ["| top ${1:10} by ${2:column} ${3|desc,asc|}"],
+        "description": "KQL top N rows"
+    },
+    "Join": {
+        "prefix": "join",
+        "body": [
+            "| join kind=${1|inner,leftouter,rightouter,fullouter,leftanti,rightanti,leftsemi,rightsemi|} (",
+            "    ${2:TableName}",
+            "    | where ${3:condition}",
+            ") on ${4:key}"
+        ],
+        "description": "KQL join"
+    },
+    "Lookup": {
+        "prefix": "lookup",
+        "body": ["| lookup ${1:LookupTable} on ${2:key}"],
+        "description": "KQL lookup join (lightweight, left-outer)"
+    },
+    "Union": {
+        "prefix": "union",
+        "body": ["| union ${1:withsource=TableName }${2:Table1}, ${3:Table2}"],
+        "description": "KQL union to combine multiple tables"
+    },
+    "Render chart": {
+        "prefix": "render",
+        "body": ["| render ${1|columnchart,barchart,linechart,piechart,scatterchart,timechart,areachart,table,card|}"],
+        "description": "KQL render visualization"
+    },
+    "Make series": {
+        "prefix": "make-series",
+        "body": [
+            "| make-series ${1:count()} on ${2:Timestamp} from ${3:ago(7d)} to ${4:now()} step ${5:1h} by ${6:column}"
+        ],
+        "description": "KQL make-series for time series analytics"
+    },
+    "Mv-expand": {
+        "prefix": "mv-expand",
+        "body": ["| mv-expand ${1:arrayColumn}"],
+        "description": "KQL mv-expand to expand dynamic arrays into rows"
+    },
+    "Mv-apply": {
+        "prefix": "mv-apply",
+        "body": [
+            "| mv-apply ${1:item} = ${2:arrayColumn} on (",
+            "    ${3:where item > 0}",
+            ")"
+        ],
+        "description": "KQL mv-apply to apply a subquery to each element of a dynamic array"
+    },
+    "Parse operator": {
+        "prefix": "parse",
+        "body": [
+            "| parse ${1:column} with * '${2:prefix}' ${3:variable}:${4:string} *"
+        ],
+        "description": "KQL parse operator for extracting structured data from strings"
+    },
+    "Parse-where operator": {
+        "prefix": "parse-where",
+        "body": [
+            "| parse-where ${1:column} with * '${2:prefix}' ${3:variable}:${4:string} *"
+        ],
+        "description": "KQL parse-where operator (only matches rows that satisfy the pattern)"
+    },
+    "Evaluate plugin": {
+        "prefix": "evaluate",
+        "body": [
+            "| evaluate ${1|autocluster,basket,bag_unpack,diffpatterns,narrow,pivot,rolling_percentile,sliding_window_counts,sequence_detect|}(${2})"
+        ],
+        "description": "KQL evaluate plugin"
+    },
+    "Scan operator": {
+        "prefix": "scan",
+        "body": [
+            "| scan with (",
+            "    step ${1:s1}: ${2:condition} => ${3:output_column} = ${4:expression};",
+            ")"
+        ],
+        "description": "KQL scan operator for stateful row-by-row processing"
+    },
+    "Partition operator": {
+        "prefix": "partition",
+        "body": [
+            "| partition by ${1:column} (",
+            "    ${2:top 1 by Timestamp desc}",
+            ")"
+        ],
+        "description": "KQL partition operator to run a subquery per partition"
+    },
+    "Serialize": {
+        "prefix": "serialize",
+        "body": ["| serialize"],
+        "description": "KQL serialize to guarantee row order for window functions"
+    },
+    "Row number": {
+        "prefix": "row_number",
+        "body": ["| extend RowNum = row_number(${1:1}, ${2:condition})"],
+        "description": "KQL row_number() window function (requires serialize)"
+    },
+    "Bin time": {
+        "prefix": "bin",
+        "body": ["bin(${1:TimeGenerated}, ${2:1h})"],
+        "description": "KQL bin() for time bucketing"
+    },
+    "Format datetime": {
+        "prefix": "format_datetime",
+        "body": ["format_datetime(${1:Timestamp}, '${2:yyyy-MM-dd HH:mm:ss}')"],
+        "description": "KQL format_datetime() to format a datetime value"
+    },
+    "Parse JSON": {
+        "prefix": "parse_json",
+        "body": ["parse_json(${1:column})"],
+        "description": "KQL parse_json() to parse a JSON string into a dynamic value"
+    },
+    "Bag unpack": {
+        "prefix": "bag_unpack",
+        "body": ["| evaluate bag_unpack(${1:BagColumn})"],
+        "description": "KQL bag_unpack plugin to expand a property bag into columns"
+    },
+    "Distinct": {
+        "prefix": "distinct",
+        "body": ["| distinct ${1:column1}, ${2:column2}"],
+        "description": "KQL distinct to return unique rows"
+    },
+    "Count": {
+        "prefix": "count",
+        "body": ["| count"],
+        "description": "KQL count operator to count all rows"
+    },
+    "Externaldata": {
+        "prefix": "externaldata",
+        "body": [
+            "externaldata (${1:column1}:${2:string}, ${3:column2}:${4:long})",
+            "    ['${5:https://storageaccount.blob.core.windows.net/container/file.csv}']",
+            "    with (format='${6|csv,tsv,json,scsv,sohsv,psv,txt,raw,singlejson,multijson,avro,parquet|}', ignoreFirstRecord=${7|false,true|})"
+        ],
+        "description": "KQL externaldata operator to query data from external storage"
+    },
+    "Datatable": {
+        "prefix": "datatable",
+        "body": [
+            "datatable (${1:column1}:${2:string}, ${3:column2}:${4:long}) [",
+            "    '${5:value1}', ${6:1},",
+            "    '${7:value2}', ${8:2}",
+            "]"
+        ],
+        "description": "KQL datatable for inline literal tables"
+    }
+}
