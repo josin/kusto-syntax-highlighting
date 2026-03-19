@@ -73,6 +73,13 @@ jobs:
       pull-requests: write
 
     steps:
+      - name: Ensure workflow runs on main
+        run: |
+          if [ "${{ github.ref_name }}" != "main" ]; then
+            echo "::error::This workflow must be dispatched from the 'main' branch (current: ${{ github.ref_name }}). Aborting."
+            exit 1
+          fi
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -108,7 +115,7 @@ jobs:
 
       - name: Read new version
         id: new_version
-        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+        run: echo "version=$(node -p 'require("./package.json").version')" >> "$GITHUB_OUTPUT"
 
       - name: Collect commits since last tag
         run: |
@@ -181,6 +188,14 @@ jobs:
           NEW_VERSION: ${{ steps.new_version.outputs.version }}
         run: |
           BRANCH="release/v${NEW_VERSION}"
+
+          # Abort if the branch already exists to prevent silently overwriting a
+          # previous release attempt or stale branch.
+          if git ls-remote --exit-code origin "refs/heads/${BRANCH}" > /dev/null 2>&1; then
+            echo "::error::Branch '${BRANCH}' already exists on remote. Delete it (and close any open release PR for that version) before retrying."
+            exit 1
+          fi
+
           git checkout -b "$BRANCH"
           git add package.json package-lock.json CHANGELOG.md
           git commit -m "chore: release v${NEW_VERSION}"

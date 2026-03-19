@@ -5,15 +5,13 @@ name: Publish Extension
 # Triggered when a release/vX.Y.Z branch is merged into main (i.e. the release
 # PR opened by the Release workflow is approved and merged).
 #
-# The job:
-#   1. Creates the vX.Y.Z git tag on the merge commit.
-#   2. Builds and packages the extension.
-#   3. Publishes to the VS Code Marketplace (requires the VSCE_PAT secret).
-#   4. Creates a GitHub Release with the .vsix attached.
-#
-# Optional manual gate: create a GitHub Environment named "publish" in
-# Settings → Environments with required reviewers. The job will pause for
-# approval before publishing when that environment is configured.
+# Jobs:
+#   prepare  – verifies the version, creates the git tag, builds and packages
+#              the extension. Runs without any approval gate.
+#   publish  – publishes to the VS Code Marketplace and creates a GitHub
+#              Release. Uses the "publish" GitHub Environment so that adding
+#              required reviewers to that environment provides an optional
+#              manual approval gate before the Marketplace publish.
 
 on:
   pull_request:
@@ -22,18 +20,24 @@ on:
       - main
 
 jobs:
-  publish:
-    name: Tag, build, and publish VS Code extension
+  prepare:
+    name: Tag and build VS Code extension
     # Only run when a release/vX.Y.Z PR is merged (not just closed)
     if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'release/v')
     runs-on: ubuntu-latest
-    environment: publish
     permissions:
       contents: write
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          # Pin to the merge commit so the tag is placed on the exact commit
+          # that landed on main, not an ambiguous PR head ref.
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
 
       - name: Extract version from branch name
         id: version
@@ -85,6 +89,32 @@ jobs:
       - name: Package extension
         run: vsce package --out kusto-syntax-highlighting.vsix
 
+      - name: Upload VSIX artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kusto-syntax-highlighting-vsix
+          path: kusto-syntax-highlighting.vsix
+
+  publish:
+    name: Publish to Marketplace and create GitHub Release
+    needs: prepare
+    runs-on: ubuntu-latest
+    # The "publish" environment enables an optional manual approval gate.
+    # If the environment is not configured, this job runs immediately after
+    # "prepare" completes. Tagging and build (in "prepare") are unaffected.
+    environment: publish
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download VSIX artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: kusto-syntax-highlighting-vsix
+
+      - name: Install vsce
+        run: npm install -g @vscode/vsce
+
       - name: Publish to VS Code Marketplace
         run: vsce publish --packagePath kusto-syntax-highlighting.vsix
         env:
@@ -93,6 +123,6 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.version.outputs.tag }}
+          tag_name: ${{ needs.prepare.outputs.tag }}
           files: kusto-syntax-highlighting.vsix
           generate_release_notes: true
