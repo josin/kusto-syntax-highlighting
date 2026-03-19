@@ -7,6 +7,18 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [2.0.2] - 2026-03-19
+
+### Changes
+- Apply transparent background to new 1024x1024 logo from @josin
+- adding new transparent logo
+- fix: build and package before push/tag; rebase before tagging; use atomic push
+- Replace kusto_logo.png with transparent background version
+- feat: merge Release and Publish into a single workflow_dispatch pipeline
+- Initial plan
+- Initial plan
+
+
 ## [2.0.1] - 2026-03-19
 
 Internal maintenance release — no user-facing changes.
