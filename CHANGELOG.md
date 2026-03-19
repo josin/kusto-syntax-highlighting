@@ -5,6 +5,12 @@ All notable changes to the **Kusto Syntax Highlighting** extension are documente
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- CI pipeline for extension publishing: PRs trigger a Build job that compiles and packages the `.vsix` artifact; the Release workflow (manual dispatch) bumps the version and creates a tag; the Publish workflow fires on that tag to publish to the VS Code Marketplace and attach the `.vsix` to a GitHub Release.
+- Build workflow now uploads the packaged `.vsix` as a downloadable workflow artifact (retained 30 days) so builds can be inspected before promoting to a release.
+
 ## [2.0.0] - 2026-03-19
 
 ### Added
