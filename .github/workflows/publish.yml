@@ -33,7 +33,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           # Pin to the merge commit so the tag is placed on the exact commit
           # that landed on master, not an ambiguous PR head ref.
@@ -48,9 +48,9 @@ jobs:
           echo "tag=v${VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
 
       - name: Install dependencies
@@ -90,7 +90,7 @@ jobs:
         run: vsce package --out kusto-syntax-highlighting.vsix
 
       - name: Upload VSIX artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: kusto-syntax-highlighting-vsix
           path: kusto-syntax-highlighting.vsix
@@ -108,7 +108,7 @@ jobs:
 
     steps:
       - name: Download VSIX artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: kusto-syntax-highlighting-vsix
 
