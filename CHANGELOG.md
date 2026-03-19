@@ -1,7 +1,7 @@
 ## 2.0.0
 
 ### Breaking changes
-- Grammar file migrated from XML (`kusto.tmLanguage`) to JSON (`kusto.tmLanguage.json`) — the active grammar is now the JSON file; themes that targeted old scope names retain compatibility through the unchanged `keyword.control.kusto` and `keyword.functions.kusto` scopes.
+- Grammar file migrated from XML (`kusto.tmLanguage`) to JSON (`kusto.tmLanguage.json`). Scope names are now more specific (e.g. `comment.line.double-slash.kusto`, `string.quoted.double.kusto`, `constant.numeric.kusto`) but remain fully compatible with existing themes because TextMate scope selectors use prefix matching — a theme rule targeting `comment` will still match `comment.line.double-slash.kusto`. The two primary control-flow scopes (`keyword.control.kusto`, `keyword.functions.kusto`) are unchanged.
 - Minimum VS Code engine version bumped from `^1.21.0` to `^1.74.0` (December 2022). Version 1.74 is chosen as the baseline because it ships the stable JSON-grammar pipeline, the modern extension marketplace validation tooling, and is well within the supported range for all current VS Code distributions.
 
 ### New features
@@ -11,6 +11,9 @@
 
 ### Grammar improvements
 - **Bug fix**: `project-away` was never highlighted due to a broken regex (`project|-away`); now correctly matched.
+- **Bug fix**: `count` as a standalone tabular operator (`| count`) is now distinguished from `count()` as an aggregation function; the latter is always highlighted with the aggregate scope.
+- **Case-insensitive matching**: all keyword, operator, and function patterns now match regardless of case (KQL is case-insensitive), so `WHERE`, `Summarize`, `DATETIME(…)`, etc. are highlighted correctly.
+- **Bug fix**: hex-literal pattern (`0x…`) now requires at least one hex digit, preventing `0x` alone from being highlighted as a valid number.
 - **Block comments** (`/* … */`) are now highlighted.
 - **Verbatim strings** (`@"…"`) and **obfuscated strings** (`h"…"` / `h'…'`) are now highlighted as distinct string types.
 - Escape sequences inside double- and single-quoted strings are highlighted.
