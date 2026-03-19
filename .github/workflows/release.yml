@@ -1,5 +1,16 @@
 name: Release
 
+# Stage 2 of the pipeline (manual dispatch).
+#
+# Jobs:
+#   build            – validates the extension compiles and packages correctly.
+#   open-release-pr  – bumps the version, updates CHANGELOG.md from the git log,
+#                      pushes a release/vX.Y.Z branch, and opens a PR against main.
+#
+# Merging the opened PR is the manual promotion gate that triggers Stage 3
+# (publish.yml), which tags, publishes to the Marketplace, and creates a
+# GitHub Release.
+
 on:
   workflow_dispatch:
     inputs:
@@ -18,11 +29,48 @@ on:
         type: string
 
 jobs:
-  release:
-    name: Bump version and create release tag
+  build:
+    name: Validate build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Compile TypeScript
+        run: npm run compile
+
+      - name: Install vsce
+        run: npm install -g @vscode/vsce
+
+      - name: Package extension
+        run: vsce package --out kusto-syntax-highlighting.vsix
+
+      - name: Upload VSIX artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kusto-syntax-highlighting-vsix
+          path: kusto-syntax-highlighting.vsix
+          retention-days: 30
+
+  open-release-pr:
+    name: Open release PR
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
 
     steps:
       - name: Checkout repository
@@ -62,13 +110,110 @@ jobs:
         id: new_version
         run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
 
-      - name: Commit version bump
+      - name: Collect commits since last tag
         run: |
-          git add package.json package-lock.json
-          git commit -m "chore: release v${{ steps.new_version.outputs.version }}"
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -n "$LAST_TAG" ]; then
+            git log "${LAST_TAG}..HEAD" --pretty=format:"- %s" --no-merges > /tmp/commits.txt
+          else
+            git log --pretty=format:"- %s" --no-merges > /tmp/commits.txt
+          fi
 
-      - name: Create and push tag
+      - name: Update CHANGELOG
+        env:
+          NEW_VERSION: ${{ steps.new_version.outputs.version }}
         run: |
-          git tag "v${{ steps.new_version.outputs.version }}"
-          git push origin HEAD
-          git push origin "v${{ steps.new_version.outputs.version }}"
+          export TODAY
+          TODAY=$(date +%Y-%m-%d)
+
+          cat > /tmp/update_changelog.js << 'JSEOF'
+          const fs = require('fs');
+          const newVersion = process.env.NEW_VERSION;
+          const today = process.env.TODAY;
+          const rawCommits = fs.existsSync('/tmp/commits.txt')
+            ? fs.readFileSync('/tmp/commits.txt', 'utf8').trim()
+            : '';
+
+          // Exclude chore commits (e.g. previous version bumps) from the log
+          const commitLines = rawCommits
+            .split('\n')
+            .filter(l => l.trim() && !l.match(/^- chore:/i));
+
+          let content = fs.readFileSync('CHANGELOG.md', 'utf8');
+
+          // Extract [Unreleased] section body.
+          // Match up to the next versioned ## [ heading, or to end of file if
+          // [Unreleased] is the only section (no 'm' flag so \s*$ means end of string).
+          const unreleasedMatch = content.match(/## \[Unreleased\]([\s\S]*?)(?=\n## \[|\s*$)/);
+          const unreleasedBody = unreleasedMatch ? unreleasedMatch[1].trim() : '';
+
+          // Build the new version section
+          const parts = [`## [${newVersion}] - ${today}`];
+          if (unreleasedBody) {
+            parts.push(unreleasedBody);
+          }
+          if (commitLines.length > 0) {
+            const heading = unreleasedBody ? '### Commits Since Last Release' : '### Changes';
+            parts.push(`${heading}\n${commitLines.join('\n')}`);
+          }
+          if (parts.length === 1) {
+            parts.push('_No notable changes._');
+          }
+
+          const newVersionSection = parts.join('\n\n');
+
+          // Replace the [Unreleased] section with a blank one, then insert the
+          // new versioned section directly below it
+          const newContent = content.replace(
+            /## \[Unreleased\][\s\S]*?(?=\n## \[|\s*$)/,
+            `## [Unreleased]\n\n${newVersionSection}\n\n`
+          );
+
+          fs.writeFileSync('CHANGELOG.md', newContent);
+          console.log(`CHANGELOG.md updated for v${newVersion}`);
+          JSEOF
+
+          node /tmp/update_changelog.js
+
+      - name: Create release branch and open PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NEW_VERSION: ${{ steps.new_version.outputs.version }}
+        run: |
+          BRANCH="release/v${NEW_VERSION}"
+          git checkout -b "$BRANCH"
+          git add package.json package-lock.json CHANGELOG.md
+          git commit -m "chore: release v${NEW_VERSION}"
+          git push origin "$BRANCH"
+
+          cat > /tmp/pr_body.md << PREOF
+          Automated release PR for **v${NEW_VERSION}**.
+
+          ## What's included
+
+          - Version bumped to \`${NEW_VERSION}\` in \`package.json\`
+          - \`CHANGELOG.md\` updated with entries since the last release
+
+          ## Before merging
+
+          - Review and edit \`CHANGELOG.md\` if needed (move items to the correct sections, refine wording)
+          - Confirm the version number is correct
+
+          ## After merging
+
+          Merging this PR will automatically trigger the **Publish Extension** pipeline, which will:
+
+          1. Create the \`v${NEW_VERSION}\` git tag
+          2. Build and package the extension
+          3. Publish to the VS Code Marketplace (requires the \`VSCE_PAT\` repository secret)
+          4. Create a GitHub Release with the \`.vsix\` artifact attached
+
+          > If a \`publish\` GitHub Environment is configured with required reviewers, a manual
+          > approval will be requested before the extension is published to the Marketplace.
+          PREOF
+
+          gh pr create \
+            --title "chore: release v${NEW_VERSION}" \
+            --body-file /tmp/pr_body.md \
+            --base main \
+            --head "$BRANCH"

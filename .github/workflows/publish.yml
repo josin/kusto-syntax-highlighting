@@ -1,20 +1,47 @@
 name: Publish Extension
 
+# Stage 3 of the pipeline (automatic promotion from Stage 2).
+#
+# Triggered when a release/vX.Y.Z branch is merged into main (i.e. the release
+# PR opened by the Release workflow is approved and merged).
+#
+# The job:
+#   1. Creates the vX.Y.Z git tag on the merge commit.
+#   2. Builds and packages the extension.
+#   3. Publishes to the VS Code Marketplace (requires the VSCE_PAT secret).
+#   4. Creates a GitHub Release with the .vsix attached.
+#
+# Optional manual gate: create a GitHub Environment named "publish" in
+# Settings → Environments with required reviewers. The job will pause for
+# approval before publishing when that environment is configured.
+
 on:
-  push:
-    tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'
+  pull_request:
+    types: [closed]
+    branches:
+      - main
 
 jobs:
   publish:
-    name: Build and publish VS Code extension
+    name: Tag, build, and publish VS Code extension
+    # Only run when a release/vX.Y.Z PR is merged (not just closed)
+    if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'release/v')
     runs-on: ubuntu-latest
+    environment: publish
     permissions:
       contents: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Extract version from branch name
+        id: version
+        run: |
+          BRANCH="${{ github.head_ref }}"
+          VERSION="${BRANCH#release/v}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "tag=v${VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -24,6 +51,30 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Verify package.json version matches release branch
+        run: |
+          EXPECTED="${{ steps.version.outputs.version }}"
+          ACTUAL=$(node -p "require('./package.json').version")
+          if [ "$EXPECTED" != "$ACTUAL" ]; then
+            echo "::error::Branch name implies v${EXPECTED} but package.json contains v${ACTUAL}. Aborting."
+            exit 1
+          fi
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Create and push tag
+        run: |
+          TAG="${{ steps.version.outputs.tag }}"
+          if git ls-remote --tags origin "$TAG" | grep -q "$TAG"; then
+            echo "::error::Tag $TAG already exists on remote. Aborting to prevent overwriting a release."
+            exit 1
+          fi
+          git tag "$TAG"
+          git push origin "$TAG"
 
       - name: Compile TypeScript
         run: npm run compile
@@ -42,5 +93,6 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.version.outputs.tag }}
           files: kusto-syntax-highlighting.vsix
           generate_release_notes: true
