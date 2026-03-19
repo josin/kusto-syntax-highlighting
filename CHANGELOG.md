@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
-## [3.0.1] - 2026-03-19
+## [2.0.0] - 2026-03-19
 
 ### Fixed
 - **Release workflow** (`release.yml`): the `open-release-pr` job now uses a job-level `if: github.ref_name == 'master'` condition instead of a step-level `exit 1` check. When the workflow is dispatched from a non-`master` branch the job is now **skipped** (not failed), which is the correct GitHub Actions pattern.
