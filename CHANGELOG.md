@@ -1,36 +1,72 @@
-## 2.0.0
+# Changelog
 
-### Breaking changes
-- Grammar file migrated from XML (`kusto.tmLanguage`) to JSON (`kusto.tmLanguage.json`). Scope names are now more specific (e.g. `comment.line.double-slash.kusto`, `string.quoted.double.kusto`, `constant.numeric.kusto`) but remain fully compatible with existing themes because TextMate scope selectors use prefix matching — a theme rule targeting `comment` will still match `comment.line.double-slash.kusto`. The two primary control-flow scopes (`keyword.control.kusto`, `keyword.functions.kusto`) are unchanged.
-- Minimum VS Code engine version bumped from `^1.21.0` to `^1.74.0` (December 2022). Version 1.74 is chosen as the baseline because it ships the stable JSON-grammar pipeline, the modern extension marketplace validation tooling, and is well within the supported range for all current VS Code distributions.
+All notable changes to the **Kusto Syntax Highlighting** extension are documented here.
 
-### New features
-- Added `.kql` file extension support (used widely by Microsoft Sentinel, Microsoft Defender, Microsoft Fabric).
-- Added `KQL` / `kql` language aliases.
-- Added snippets for 30+ common KQL patterns (basic query, `let`, `join`, `summarize`, `make-series`, `scan`, `partition`, `externaldata`, `datatable`, and more).
+The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-### Grammar improvements
-- **Bug fix**: `project-away` was never highlighted due to a broken regex (`project|-away`); now correctly matched.
-- **Bug fix**: `count` as a standalone tabular operator (`| count`) is now distinguished from `count()` as an aggregation function; the latter is always highlighted with the aggregate scope.
-- **Case-insensitive matching**: all keyword, operator, and function patterns now match regardless of case (KQL is case-insensitive), so `WHERE`, `Summarize`, `DATETIME(…)`, etc. are highlighted correctly.
-- **Bug fix**: hex-literal pattern (`0x…`) now requires at least one hex digit, preventing `0x` alone from being highlighted as a valid number.
-- **Block comments** (`/* … */`) are now highlighted.
-- **Verbatim strings** (`@"…"`) and **obfuscated strings** (`h"…"` / `h'…'`) are now highlighted as distinct string types.
-- Escape sequences inside double- and single-quoted strings are highlighted.
-- **Type-cast literals** (`datetime(…)`, `int(…)`, `bool(…)`, `timespan(…)`, `dynamic(…)`, etc.) highlighted as `support.type`.
-- **Management commands** (`.create`, `.drop`, `.alter`, `.show`, etc.) highlighted as `entity.name.tag`.
-- `true`, `false`, `null` promoted to `constant.language` scope.
-- **New tabular operators**: `as`, `consume`, `distinct`, `evaluate`, `externaldata`, `facet`, `find`, `fork`, `getschema`, `invoke`, `lookup`, `make-series`, `mv-apply`, `mv-expand`, `parse`, `parse-kv`, `parse-where`, `partition`, `project-away`, `project-keep`, `project-rename`, `project-reorder`, `reduce`, `render`, `sample`, `sample-distinct`, `scan`, `search`, `serialize`, `top-hitters`, `top-nested`.
-- **New aggregate functions** (`keyword.aggregate.kusto` scope): `any`, `anyif`, `arg_max`, `arg_min`, `avg`, `avgif`, `buildschema`, `countif`, `dcount`, `dcountif`, `dcount_hll`, `hll`, `hll_if`, `hll_merge`, `make_bag`, `make_bag_if`, `make_list`, `make_list_if`, `make_list_with_nulls`, `make_set`, `make_set_if`, `max`, `maxif`, `min`, `minif`, `percentile`, `percentiles`, `percentiles_array`, `percentile_tdigest`, `stdev`, `stdevif`, `stdevp`, `sum`, `sumif`, `take_any`, `take_anyif`, `tdigest`, `tdigest_merge`, `merge_tdigest`, `variance`, `varianceif`, `variancep`.
-- **New scalar functions**: full type conversion set, math, string, datetime, array/bag, geospatial, IP, hash, window (`prev`, `next`, `row_cumsum`, `row_number`, `row_rank_dense`, `row_rank_min`, `row_window_session`), and time-series (`series_*`) functions.
-- **Filter/comparison operators** (`keyword.operator.kusto` scope): `between`, `contains`, `contains_cs`, `endswith`, `endswith_cs`, `has`, `has_all`, `has_any`, `has_cs`, `in`, `matches`, `startswith`, `startswith_cs`.
-- **General keywords** (`keyword.other.kusto` scope): `let`, `by`, `on`, `kind`, `with`, `asc`, `desc`, `and`, `or`, `not`, `of`, `to`, `from`, `step`.
-- Deprecated aliases `makeset` and `makelist` retained for backward compatibility alongside `make_set` / `make_list`.
+## [2.0.0] - 2026-03-19
 
-## 1.0.1
+### Added
+- `.kql` file extension support (in addition to existing `.csl` and `.kusto`)
+- `KQL` language alias for the language selector
+- `galleryBanner` for a branded VS Code Marketplace listing
+- `wordPattern` in language configuration for correct word selection of Kusto identifiers
+- `indentationRules` in language configuration for automatic indentation inside `{}` blocks
+- `folding.markers` for `// #region` / `// #endregion` code folding
+- Comprehensive modern Kusto scalar functions (500+), including string, math, datetime, geo, IP, array, and dynamic bag functions
+- All current tabular operators: `render`, `parse`, `parse-where`, `fork`, `facet`, `search`, `evaluate`, `invoke`, `externaldata`, `find`, `distinct`, `sample`, `mv-apply`, `lookup`, `serialize`, `top-hitters`, `top-nested`, `getschema`, `reduce`, and more
+- Aggregation functions group: `dcount`, `make_bag`, `make_set`, `percentile`, `tdigest`, `hll`, and many more
+- `data-types` grammar scope for Kusto type literals (`bool`, `datetime`, `dynamic`, `guid`, `int`, `long`, `real`, `string`, `timespan`, `decimal`)
+- `constants` grammar scope for `true`, `false`, `null`, `nan`, `inf`
+- `keywords.operator` scope for logical operators: `and`, `or`, `not`, `in`, `has`, `contains`, `between`, `startswith`, `endswith`, `matches regex`, etc.
+- `$schema` reference in grammar file for validation tooling
+- Block comment grammar rule (`/* */`) so block comments are correctly tokenized
 
-- Adding logo for the extension
+### Changed
+- Grammar converted from legacy Apple Plist XML (`.tmLanguage`) to JSON (`.tmLanguage.json`) — the modern VS Code standard
+- All TextMate scope names updated to standard conventions:
+  - `keyword.functions.kusto` → `support.function.kusto` and `support.function.aggregate.kusto`
+  - `keyword.control.kusto` retained for tabular operators (correct standard)
+  - `string.constant.double` → `string.quoted.double.kusto`
+  - `string.constant.single` → `string.quoted.single.kusto`
+  - `comment` → `comment.line.double-slash.kusto`
+  - `string.variable` → `variable.other.kusto`
+  - `constant.numeric` → `constant.numeric.kusto`
+- String patterns now use `begin`/`end` pairs with negative-lookbehind end patterns so escaped quotes (`\"`, `\'`) no longer terminate strings early
+- `autoClosingPairs` in language configuration converted to object format with `notIn: ["string", "comment"]` guards for quote pairs
+- `engines.vscode` updated from `^1.21.0` to `^1.75.0`
+- `categories` updated from `"Languages"` (deprecated) to `"Programming Languages"`
+- `keywords` in manifest expanded with `kql`, `azure data explorer`, `azure monitor`, `log analytics`
+- README rewritten with feature list, example query, run-query setup guide, and Marketplace badges
+- `.vscodeignore` tightened to exclude build artifacts from the installed package
 
-## 1.0.0
+### Fixed
+- Regex bug where `project|-away` was parsed as two separate alternatives instead of the single keyword `project-away`
+- String `end` patterns now use `(?<!\\)"` / `(?<!\\)'` to prevent escaped quotes from terminating strings early
+- Variable substitution regex restricted to single line to prevent unbounded multi-line matches
+- Hex literal regex now requires at least one digit after `0x` (changed `*` to `+`)
+- Duplicate `sort` entry removed from tabular operators list
+- `not` removed from `scalar-misc-functions` (it belongs only in `keywords` as `keyword.operator.kusto`)
+- `count` removed from `tabular-operators` (it belongs in `aggregation-functions`)
+- All keyword, operator, and function patterns are now case-insensitive (`(?i)` flag) so mixed-case KQL (`WHERE`, `Summarize`, `DATETIME(…)`, etc.) is highlighted correctly
 
-- Initial release
+## [1.1.0] - 2024-05-01
+
+### Added
+- **Run Kusto Query** command (`kusto.runQuery`) to execute queries against an Azure Data Explorer cluster
+- Results are displayed in the **Kusto Results** output channel
+- New keyboard shortcut: `Ctrl+Alt+E` / `Cmd+Alt+E` when editing Kusto files
+- Run button (▶) added to the editor toolbar for `.kusto` / `.csl` files
+- New settings: `kusto.clusterUrl`, `kusto.database`, `kusto.loginMode`
+- Supports Azure CLI (`AzureLogin`), interactive browser (`InteractiveLogin`), and managed identity (`ManagedIdentity`) authentication
+
+## [1.0.1] - 2018-09-17
+
+### Added
+- Logo / icon image for the Marketplace listing
+
+## [1.0.0] - 2018-09-16
+
+### Added
+- Initial release with basic syntax highlighting for `.csl` and `.kusto` files
